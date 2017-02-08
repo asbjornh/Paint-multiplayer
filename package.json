@@ -1,3 +1,5 @@
 {
-  "dependencies": {}
+  "dependencies": {
+    "http": "0.0.0"
+  }
 }
