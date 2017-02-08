@@ -1,5 +1,5 @@
-const http = require('http')  
+const server = require('http').createServer()  
 
-http.listen(80, () => {  
+server.listen(80, () => {  
 	console.log(`server is listening on ${port}`)
 })
