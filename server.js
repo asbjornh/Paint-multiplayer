@@ -11,4 +11,5 @@ http.createServer( (request, response) => {
 	})
 	response.write("Hello")
 	response.end
+	console.log("request", request);
 }).listen(process.env.port)
