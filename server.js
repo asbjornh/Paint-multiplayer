@@ -18,8 +18,7 @@ io.on("connection", (socket) => {
 	console.log("user connected to socket")
 
 	socket.on("userinput", (data) => {
-		console.log(data)
-		io.emit("userinput", data);
+		socket.broadcast.emit("userinput", data);
 	})
 })
 

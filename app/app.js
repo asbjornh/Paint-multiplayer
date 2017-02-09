@@ -2,7 +2,8 @@ var socket = io(),
 	isTouch,
 	isMouseDown = false,
 	segmentLength = 4,
-	smoothLength = 4,
+	smoothLength = 3,
+	thisPoints = [],
 	data = {
 		box: {
 			width: window.innerWidth,
@@ -20,37 +21,70 @@ try {
 	isTouch = false;
 }
 
-function sendData(coords) {
-	data.points.push({
+
+
+function smoothPoints(ps) {
+	var a = 0.2;
+	var p = ps[ps.length - 1];
+	var p1 = ps[ps.length - 2];
+	ps[ps.length - 1] = {
+		x: p.x * a + p1.x * (1 - a),
+		y: p.y * a + p1.y * (1 - a)
+	};
+
+	return ps;
+};
+
+
+function processCoords(coords) {
+	var point = {
 		x: coords.clientX,
 		y: coords.clientY
-	});
+	};
 
+	data.points.push(point);
+	thisPoints.push(point);
+
+	if (data.points.length > smoothLength)  { data.points = smoothPoints(data.points); }
 	if (data.points.length > segmentLength) { data.points = data.points.slice(1); }
 
+	if (thisPoints.length > smoothLength)  { thisPoints = smoothPoints(thisPoints); }
+	if (thisPoints.length > segmentLength) { thisPoints = thisPoints.slice(1); }
+
+	drawLine(thisPoints);
 	socket.emit("userinput", data);
 }
 
 if (isTouch) {
-	document.addEventListener("touchend", function(){ data.points = []; });
+	document.addEventListener("touchend", function(){
+		data.points = [];
+		thisPoints = [];
+	});
 
 	document.addEventListener("touchmove", function(e){
-		sendData(e.touches[0]);
+		processCoords(e.touches[0]);
 	});
 } else {
 	document.addEventListener("mousedown", function(){ isMouseDown = true; });
 
 	document.addEventListener("mouseup", function(){
 		isMouseDown = false;
-		data.points = []; // Reset points
+		data.points = [];
+		thisPoints = [];
 	});
 
 	document.addEventListener("mousemove", function(e){
 		if (isMouseDown) {
-			sendData(e);
+			processCoords(e);
 		}
 	});
 }
+
+
+// Draw
+socket.on("userinput", function(data){
+	drawLine(data.points);
+});
 
 
 
@@ -74,27 +108,6 @@ function drawLine(points) {
 	ctx.fill();
 	ctx.stroke();
 }
-
-function smooth(ps) {
-	var a = 0.2;
-	var p = ps[ps.length - 1];
-	var p1 = ps[ps.length - 2];
-	ps[ps.length - 1] = {
-		x: p.x * a + p1.x * (1 - a),
-		y: p.y * a + p1.y * (1 - a)
-	};
-
-	return ps;
-};
-
-
-
-// Draw
-socket.on("userinput", function(data){
-	if (data.points.length >= smoothLength) {
-		drawLine(smooth(data.points));
-	}
-});
 
 
 
