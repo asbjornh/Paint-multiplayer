@@ -1,6 +1,7 @@
-const port = process.env.port
+const port = process.env.port || 3000
 const http = require("http")
-const app = require("express")
+const express = require("express")
+const app = express()
 // const server = http.createServer()
 
 // server.listen(process.env.port, () => {  
