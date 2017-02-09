@@ -88,8 +88,8 @@ socket.on("userinput", function(data){
 // Canvas setup
 var	ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth * window.devicePixelRatio;
+canvas.height = window.innerHeight * window.devicePixelRatio;
 
 function drawLine(points, color) {
 	var p0 = points[0];
