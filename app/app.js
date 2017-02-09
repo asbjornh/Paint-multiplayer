@@ -40,8 +40,8 @@ function smoothPoints(ps) {
 
 function processCoords(coords) {
 	data.points.push({
-		x: coords.clientX * window.devicePixelRatio,
-		y: coords.clientY * window.devicePixelRatio
+		x: coords.clientX / window.devicePixelRatio,
+		y: coords.clientY / window.devicePixelRatio
 	});
 
 	if (data.points.length > smoothLength)  { data.points = smoothPoints(data.points); }
