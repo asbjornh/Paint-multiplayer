@@ -40,14 +40,17 @@ function smoothPoints(ps) {
 
 function processCoords(coords) {
 	data.points.push({
-		x: coords.clientX * window.devicePixelRatio,
-		y: coords.clientY * window.devicePixelRatio
+		x: coords.clientX,
+		y: coords.clientY
 	});
 
 	if (data.points.length > smoothLength)  { data.points = smoothPoints(data.points); }
 	if (data.points.length > segmentLength) { data.points = data.points.slice(1); }
 
-	drawLine(data.points, data.color);
+	drawLine(data.points.map(function(p){
+		return { x: p.x * window.devicePixelRatio, y: p.y * window.devicePixelRatio };
+	}), data.color);
+	
 	socket.emit("userinput", data);
 }
 
