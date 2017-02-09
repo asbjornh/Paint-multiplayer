@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<meta name="viewport" content="width=device-width">
 	<meta charset="UTF-8">
 	<title>Paint multiplayer</title>
+	<script src="/socket.io/socket.io.js"></script>
+
+	<style>
+		body { margin: 0; }
+		canvas { position: fixed; }
+	</style>
 </head>
 <body>
-	<h1>Hey</h1>
-	<!-- <script src="app/bundle.js"></script> -->
+	<canvas id="canvas"></canvas>
+	<script src="/app/app.js"></script>
 </body>
 </html>
