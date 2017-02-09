@@ -62,6 +62,7 @@ if (isTouch) {
 	});
 
 	document.addEventListener("touchmove", function(e){
+		e.preventDefault();
 		processCoords(e.touches[0]);
 	});
 } else {
