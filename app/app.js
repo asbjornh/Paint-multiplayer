@@ -17,7 +17,6 @@ var socket = io(),
 
 
 document.getElementById("creategame").addEventListener("click", function(){
-	console.log("button clicked");
 	socket.emit("creategame");
 });
 
@@ -39,17 +38,23 @@ socket.on("gamecreated", function(gamecode){
 });
 
 socket.on("debug", function(msg){
-	console.log("debug", msg);
+	console.log(msg);
 });
 
 socket.on("turnstart", function(page){
-	console.log("turn start", page);
+	// console.log("turn start", page);
 	player.page = page;
 });
 
 socket.on("turnend", function(){
-	console.log("turn end");
 	socket.emit("turnend", player.page.question);
+});
+
+socket.on("rate", function(pages){
+	socket.emit("rating", pages.map(function(page){
+		page.accepted = true;
+		return page;
+	}))
 });
 
 

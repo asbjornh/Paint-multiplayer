@@ -53,64 +53,86 @@ io.on("connection", (socket) => {
 		socket.broadcast.emit("userinput", data)
 	})
 
-	socket.on("gameend", (data) => {
-		console.log("game ended", data)
-	})
-
 	socket.on("startgame", (gamecode) => {
 		console.log("game started")
-		const game = games[gamecode]
+		var game = games[gamecode]
 
 		game.playerSockets = io.sockets.in(gamecode)
 
 		game.startGame()
 		game.playerSockets.emit("debug", "game started")
 		turn(game)
-
 	})
 
 	turn = (game) => {
+		game.setReadyState(false)
 		game.players.forEach((player) => {
 			var socket = io.sockets.connected[player.id],
 				page = player.book.pages.slice(-1)[0]
 	
-			page.name = player.name
-
 			socket.emit("turnstart", page)
 		})
 
 		setTimeout(function() {
 			game.playerSockets.emit("turnend")
-		}, 1000);
+		}, 1000)
+	}
+
+	rate = (game) => {
+		game.setReadyState(false)
+		game.players.forEach((player) => {
+			var socket = io.sockets.connected[player.id]
+
+			socket.emit("rate", player.book.pages)
+		})
 	}
 
 	socket.on("turnend", (answer) => {
-		socket.player.book.pages.slice(-1)[0].answer = answer
+		var game = games[socket.player.gamecode]
 
-		const game = games[socket.player.gamecode]
+		// Assign answer to last page of book
+		socket.player.book.pages.slice(-1)[0].answer = answer
+		socket.player.ready = true
 
 		// Check that everyone has submitted answer
-		if (game.checkTurn()) {
+		if (game.getReadyState()) {
+			// Turn has ended
 			game.rotateBooks()
 
 			// Check if round is over
 			if (game.checkRound()) {
-				game.playerSockets.emit("debug", "new turn")
+				// New turn
 				game.addPages()
 				turn(game)
 			} else {
+				// Round over
 				game.playerSockets.emit("debug", "round over")
+				game.playerSockets.emit("debug", game.players.map(p => p.book.pages))
+				game.returnBooksToOwner
 				game.remainingRounds--
 
-				// Check if game is over
-				if (game.remainingRounds == 0) {
-					game.playerSockets.emit("debug", "game over")
-					game.playerSockets.emit("debug", game.players)
-				} else {
-					game.playerSockets.emit("debug", "new round")
-					game.createBooks()
-					turn(game)
-				}
+				rate(game)
+			}
+		}
+	})
+
+	socket.on("rating", (ratedPages) => {
+		var game = games[socket.player.gamecode]
+
+		game.rate(ratedPages)
+
+		socket.player.ready = true
+
+		if (game.getReadyState()) {
+			// Check if game is over
+			if (game.remainingRounds == 0) {
+				// Game over
+				game.playerSockets.emit("debug", "game over")
+				game.playerSockets.emit("debug", game.players)
+			} else {
+				// New round
+				game.createBooks()
+				turn(game)
 			}
 		}
 	})
