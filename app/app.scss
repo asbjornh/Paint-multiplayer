@@ -1,0 +1,16 @@
+@import "styles/fonts";
+
+@import "styles/join-form";
+
+body {
+	margin: 0;
+	height: 100%;
+	width: 100%;
+}
+
+canvas {
+	display: none;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+}

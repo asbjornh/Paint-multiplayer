@@ -7,6 +7,7 @@ const io = require("socket.io")(http)
 const utils = require("./server/utils")
 const Game = require("./server/game")
 
+console.log(app.get("port"))
 
 app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/index.html")
@@ -54,7 +55,7 @@ io.on("connection", (socket) => {
 	})
 
 	socket.on("startgame", (gamecode) => {
-		console.log("game started")
+		console.log("game", gamecode, "started")
 		var game = games[gamecode]
 
 		game.playerSockets = io.sockets.in(gamecode)

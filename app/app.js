@@ -1,3 +1,16 @@
+require("./app.scss");
+
+import io from "socket.io-client";
+import React from "react";
+import { render } from "react-dom";
+
+import Main from "./components/main";
+
+render(
+	React.createElement(Main),
+	document.getElementById("app")
+);
+
 var socket = io(),
 	isTouch,
 	isMouseDown = false,
@@ -15,50 +28,49 @@ var socket = io(),
 		}
 	};
 
-
-document.getElementById("creategame").addEventListener("click", function(){
+document.getElementById("creategame").addEventListener("click", function () {
 	socket.emit("creategame");
 });
 
-document.getElementById("join").addEventListener("click", function(){
+document.getElementById("join").addEventListener("click", function () {
 	player.gamecode = document.getElementById("gamecode").value.toUpperCase();
 	player.name = document.getElementById("playername").value;
 	socket.emit("join", player);
 });
 
-document.getElementById("startgame").addEventListener("click", function(){
+document.getElementById("startgame").addEventListener("click", function () {
 	socket.emit("startgame", player.gamecode);
 });
 
-socket.on("gamecreated", function(gamecode){
+socket.on("gamecreated", function (gamecode) {
 	console.log(gamecode);
 	player.gamecode = gamecode;
 	player.name = document.getElementById("playername").value;
 	socket.emit("join", player);
 });
 
-socket.on("debug", function(msg){
+socket.on("debug", function (msg) {
 	console.log(msg);
 });
 
-socket.on("turnstart", function(page){
+socket.on("turnstart", function (page) {
 	// console.log("turn start", page);
 	player.page = page;
 });
 
-socket.on("turnend", function(){
+socket.on("turnend", function () {
 	socket.emit("turnend", player.page.question);
 });
 
-socket.on("rate", function(pages){
-	socket.emit("rating", pages.map(function(page){
+socket.on("rate", function (pages) {
+	socket.emit("rating", pages.map(function (page) {
 		page.accepted = true;
 		return page;
-	}))
+	}));
 });
 
 
-try {  
+try {
 	document.createEvent("TouchEvent");
 	isTouch = true;
 } catch (e) {
@@ -75,7 +87,7 @@ function smoothPoints(ps) {
 	};
 
 	return ps;
-};
+}
 
 
 function drawHandler(coords) {
@@ -94,25 +106,25 @@ function drawHandler(coords) {
 
 
 if (isTouch) {
-	canvas.addEventListener("touchmove", function(e){
+	canvas.addEventListener("touchmove", function (e) {
 		e.preventDefault();
 		drawHandler(e.touches[0]);
 	});
 
-	canvas.addEventListener("touchend", function(){
+	canvas.addEventListener("touchend", function () {
 		player.paths.push(currentDrawing);
 		currentDrawing = [];
 	});
 } else {
-	canvas.addEventListener("mousedown", function(){ isMouseDown = true; });
+	canvas.addEventListener("mousedown", function () { isMouseDown = true; });
 
-	canvas.addEventListener("mousemove", function(e){
+	canvas.addEventListener("mousemove", function (e) {
 		if (isMouseDown) {
 			drawHandler(e);
 		}
 	});
 
-	canvas.addEventListener("mouseup", function(){
+	canvas.addEventListener("mouseup", function () {
 		isMouseDown = false;
 		player.paths.push(currentDrawing);
 		currentDrawing = [];
@@ -121,7 +133,7 @@ if (isTouch) {
 
 
 // Draw
-socket.on("userinput", function(data){
+socket.on("userinput", function (data) {
 	drawPaths(data.paths);
 });
 
@@ -153,9 +165,9 @@ function drawPaths(paths) {
 	ctx.fillStyle = "whitesmoke";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-	paths.forEach(function(path){
+	paths.forEach(function (path) {
 		var lineSegment = [];
-		path.forEach(function(point){
+		path.forEach(function (point) {
 			lineSegment.push(point);
 			if (lineSegment.length > segmentLength) {
 				drawLine(lineSegment.slice(-segmentLength));
@@ -163,7 +175,3 @@ function drawPaths(paths) {
 		});
 	});
 }
-
-
-
-
