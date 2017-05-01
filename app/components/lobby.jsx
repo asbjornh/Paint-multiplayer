@@ -1,17 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Lobby = ({ gameCode, players, startGame, visible }) => {
-	if (visible) {
-		return (
-			<div className="lobby">
+import Button from "./button";
+
+const Lobby = ({ gameCode, players, startGame }) => {
+	return (
+		<div className="lobby">
+			<div className="lobby-inner">
 				<h2>{gameCode}</h2>
-				<button type="button" onClick={startGame}>Start spill</button>
+				<Button text="Start spill" onClick={startGame} />
 			</div>
-		);
-	} else {
-		return null;
-	}
+		</div>
+	);
 };
 
 Lobby.propTypes = {

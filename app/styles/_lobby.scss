@@ -1,0 +1,8 @@
+.lobby {
+	@include full-screen;
+	@include slide-in;
+}
+
+.lobby-inner {
+	@include content-container;
+}

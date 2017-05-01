@@ -1,18 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
+import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
+
+import Button from "./button";
+import TextInput from "./text-input";
 
 class JoinForm extends React.Component {
 	static propTypes = {
 		createGame: 	PropTypes.func,
 		joinGame: 		PropTypes.func,
+		gameCode: 		PropTypes.string,
+		playerName: 	PropTypes.string,
 		setGameCode: 	PropTypes.func,
-		setPlayerName: 	PropTypes.func,
-		visible: 		PropTypes.bool
-	};
+		setPlayerName: 	PropTypes.func
+	}
 
 	state = {
-		step: 0
-	};
+		step: 0,
+		shakeNameInput: false,
+		shakeGameCodeInput: false
+	}
 
 	handleName(e) {
 		this.props.setPlayerName(e.target.value);
@@ -22,30 +29,58 @@ class JoinForm extends React.Component {
 		this.props.setGameCode(e.target.value);
 	}
 
-	nextStep() {
-		this.setState({ step: ++this.state.step });
+	submitName() {
+		if (this.props.playerName) {
+			this.setState({ step: ++this.state.step });
+		} else {
+			this.setState({ shakeNameInput: true });
+			setTimeout(() => { this.setState({ shakeNameInput: false }) }, 700);
+		}
+	}
+
+	joinButton() {
+		if (this.props.gameCode) {
+			this.props.joinGame()
+		} else {
+			this.setState({ shakeGameCodeInput: true });
+			setTimeout(() => { this.setState({ shakeGameCodeInput: false }) }, 700);
+		}
 	}
 
 	render() {
-		if (this.props.visible) {
-			return (
-				<div className="join-form">
-					<div className="join-form-group" style={{ display: this.state.step === 0 ? "block" : "none" }}>
-						<input type="text" placeholder="Navn" onChange={this.handleName.bind(this)} />
-						<button type="button" onClick={this.nextStep.bind(this)}>Ok!</button>
+		return (
+			<CSSTransitionGroup
+				className="form"
+				transitionName="view"
+				transitionEnterTimeout={900}
+				transitionLeaveTimeout={700}
+			>
+				{this.state.step === 0 &&
+					<div className="form-group">
+						<div className="form-group-inner">
+							<TextInput label="Navn" onChange={this.handleName.bind(this)} shake={this.state.shakeNameInput} />
+							<Button onClick={this.submitName.bind(this)} text="Ok!" />
+						</div>
 					</div>
+				}
 
-					<div className="join-form-group" style={{ display: this.state.step === 1 ? "block" : "none " }}>
-						<input type="text" placeholder="Spillkode" onChange={this.handleGameCode.bind(this)} />
-						<button type="button" onClick={this.props.joinGame}>Bli med i spill</button>
-						<div className="join-form-separator">eller</div>
-						<button type="button" onClick={this.props.createGame}>Opprett spill</button>
+				{this.state.step === 1 &&
+					<div className="form-group">
+						<div className="form-group-inner">
+							<TextInput
+								className="uppercase"
+								label="Spillkode"
+								onChange={this.handleGameCode.bind(this)}
+								shake={this.state.shakeGameCodeInput}
+							/>
+							<Button onClick={this.joinButton.bind(this)} text="Bli med i spill" />
+							<div className="form-separator">eller</div>
+							<Button onClick={this.props.createGame} text="Opprett spill" />
+						</div>
 					</div>
-				</div>
-			);
-		} else {
-			return null;
-		}
+				}
+			</CSSTransitionGroup>
+		);
 	}
 }
 

@@ -1,11 +1,29 @@
 @import "styles/fonts";
+@import "styles/vars";
+@import "styles/mixins";
 
-@import "styles/join-form";
+@import "styles/button";
+@import "styles/input";
+@import "styles/form";
+@import "styles/lobby";
 
-body {
+
+*, *:before, *:after {
+	box-sizing: border-box;
+}
+
+html, body, #app, #app > div {
 	margin: 0;
 	height: 100%;
 	width: 100%;
+	overflow: hidden;
+}
+
+body, input, button {
+	font-family: "Miso";
+	font-size: 25px;
+	-webkit-font-smoothing: antialiased;
+	outline: none;
 }
 
 canvas {
@@ -13,4 +31,56 @@ canvas {
 	position: fixed;
 	height: 100%;
 	width: 100%;
+}
+
+#app {
+	background: linear-gradient(-45deg, $lime, $yellow, $red 90%);
+}
+
+.transition-container {
+	@include full-screen;
+	overflow: hidden;
+}
+
+.logo {
+	position: absolute;
+	height: 200px;
+	width: 100%;
+	transform: translateY(-100px);
+	transition: transform .4s $ease-out-back;
+
+	&.is-large {
+		transform: none;
+	}
+}
+
+.logo-main {
+	position: absolute;
+	z-index: 2;
+	top: 50%;
+	left: 50%;
+	width: 172px;
+	height: 118px;
+	background-image: url(../assets/img/logo.svg);
+	transform: translate(-50%, -50%) translateY(50px) scale(0.5);
+	transition: transform .4s $ease-out-back;
+
+	.is-large & {
+		transform: translate(-50%, -50%);
+	}
+}
+
+.logo-shadow {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 172px;
+	height: 118px;
+	background-image: url(../assets/img/logo-red.svg);
+	transform: translate(-50%, -50%) translateY(64px) scale(0.5);
+	filter: blur(8px);
+
+	.is-large & {
+		transform: translate(-50%, -50%) translateY(14px);
+	}
 }

@@ -1,0 +1,32 @@
+.form {
+	@include full-screen;
+	@include slide-out;
+	color: white;
+	overflow: hidden;
+
+	.text-input, button {
+		width: 100%;
+		margin: 20px 0;
+	}
+}
+
+.form-separator {
+	margin: auto;
+	font-weight: bold;
+}
+
+.form-group {
+	@include full-screen;
+	@include slide-in;
+	@include slide-out;
+}
+
+.form-group-inner {
+	@include content-container;
+	top: 200px;
+	max-height: 400px;
+	transform: translateX(-50%);
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}

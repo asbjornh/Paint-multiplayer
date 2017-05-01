@@ -1,0 +1,62 @@
+button {
+	position: relative;
+	width: 100%;
+	appearance: none;
+	border: none;
+	border-radius: 10px;
+	height: 0;
+	padding: 0;
+	padding-top: 26.185%;
+	color: $red;
+	font-weight: bold;
+	background-color: transparent;
+	will-change: transform;
+	transition: transform .3s $ease-out;
+
+	&:before,
+	&:after {
+		content: "";
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		top: 0;
+		left: 0;
+		will-change: transform;
+	}
+
+	// Background
+	&:after {
+		z-index: 1;
+		background-size: 100%;
+		background-image: url(../assets/img/button.svg);
+	}
+
+	// Shadow
+	&:before {
+		z-index: -1;
+		border-radius: 30px;
+		opacity: 0.5;
+		background-color: $red;
+		box-shadow: 0 20px 40px $red;
+		transition: transform .3s $ease-out;
+	}
+
+	&.hover {
+		transform: scale(1.1);
+		transition-timing-function: $ease-out-back-hard;
+
+		&:before {
+			transform: scale(0.9) translateY(10px);
+			transition-timing-function: $ease-out-back-hard;
+		}
+	}
+
+	span {
+		position: absolute;
+		z-index: 2;
+		top: 50%;
+		left: 50%;
+		width: 80%;
+		transform: translate(-50%, -50%);
+	}
+}

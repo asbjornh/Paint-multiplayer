@@ -27,10 +27,10 @@ http.listen(port, () => {
 
 var games = {}
 
-io.on("connection", (socket) => {
+io.on("connection", socket => {
 	console.log("user connected to socket", socket.id)
 
-	socket.on("join", (player) => {
+	socket.on("join", player => {
 		socket.join(player.gamecode)
 		socket.player = player
 
@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
 
 		if (!games[player.gamecode].gameInProgress) {
 			games[player.gamecode].players.push(player)
-			
+
 			io.sockets.in(player.gamecode).emit("debug", "player " + player.name + " joined")
 			io.sockets.in(player.gamecode).emit("debug", games[player.gamecode].players)
 		}
@@ -50,11 +50,34 @@ io.on("connection", (socket) => {
 		games[gamecode] = new Game()
 	})
 
-	socket.on("userinput", (data) => {
+	socket.on("userinput", data => {
 		socket.broadcast.emit("userinput", data)
 	})
 
-	socket.on("startgame", (gamecode) => {
+	const turn = game => {
+		game.setReadyState(false)
+		game.players.forEach(player => {
+			var socket = io.sockets.connected[player.id],
+				page = player.book.pages.slice(-1)[0]
+
+			socket.emit("turnstart", page)
+		})
+
+		setTimeout(function () {
+			game.playerSockets.emit("turnend")
+		}, 1000)
+	}
+
+	const rate = game => {
+		game.setReadyState(false)
+		game.players.forEach(player => {
+			var socket = io.sockets.connected[player.id]
+
+			socket.emit("rate", player.book.pages)
+		})
+	}
+
+	socket.on("startgame", gamecode => {
 		console.log("game", gamecode, "started")
 		var game = games[gamecode]
 
@@ -65,30 +88,7 @@ io.on("connection", (socket) => {
 		turn(game)
 	})
 
-	turn = (game) => {
-		game.setReadyState(false)
-		game.players.forEach((player) => {
-			var socket = io.sockets.connected[player.id],
-				page = player.book.pages.slice(-1)[0]
-	
-			socket.emit("turnstart", page)
-		})
-
-		setTimeout(function() {
-			game.playerSockets.emit("turnend")
-		}, 1000)
-	}
-
-	rate = (game) => {
-		game.setReadyState(false)
-		game.players.forEach((player) => {
-			var socket = io.sockets.connected[player.id]
-
-			socket.emit("rate", player.book.pages)
-		})
-	}
-
-	socket.on("turnend", (answer) => {
+	socket.on("turnend", answer => {
 		var game = games[socket.player.gamecode]
 
 		// Assign answer to last page of book
@@ -117,7 +117,7 @@ io.on("connection", (socket) => {
 		}
 	})
 
-	socket.on("rating", (ratedPages) => {
+	socket.on("rating", ratedPages => {
 		var game = games[socket.player.gamecode]
 
 		game.rate(ratedPages)
@@ -126,7 +126,7 @@ io.on("connection", (socket) => {
 
 		if (game.getReadyState()) {
 			// Check if game is over
-			if (game.remainingRounds == 0) {
+			if (game.remainingRounds === 0) {
 				// Game over
 				game.playerSockets.emit("debug", "game over")
 				game.playerSockets.emit("debug", game.players)
