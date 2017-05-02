@@ -7,8 +7,6 @@ const io = require("socket.io")(http)
 const utils = require("./server/utils")
 const Game = require("./server/game")
 
-console.log(app.get("port"))
-
 app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/index.html")
 })
@@ -36,15 +34,20 @@ io.on("connection", socket => {
 
 		player.id = socket.id
 
-		if (!games[player.gamecode].gameInProgress) {
-			games[player.gamecode].players.push(player)
+		if (games[player.gamecode]) {
+			if (!games[player.gamecode].gameInProgress) {
+				games[player.gamecode].players.push(player)
 
-			io.sockets.in(player.gamecode).emit("debug", "player " + player.name + " joined")
-			io.sockets.in(player.gamecode).emit("debug", games[player.gamecode].players)
+				io.sockets.in(player.gamecode).emit("player-joined", games[player.gamecode].players)
+			} else {
+				socket.emit("game-already-in-progress")
+			}
+		} else {
+			socket.emit("game-nonexistent")
 		}
 	})
 
-	socket.on("creategame", () => {
+	socket.on("create-game", () => {
 		var gamecode = utils.createGameCode(Object.getOwnPropertyNames(games))
 		socket.emit("gamecreated", gamecode)
 		games[gamecode] = new Game()
@@ -77,7 +80,7 @@ io.on("connection", socket => {
 		})
 	}
 
-	socket.on("startgame", gamecode => {
+	socket.on("start-game", gamecode => {
 		console.log("game", gamecode, "started")
 		var game = games[gamecode]
 

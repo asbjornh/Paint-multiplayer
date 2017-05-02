@@ -1,6 +1,31 @@
 .lobby {
 	@include full-screen;
 	@include slide-in;
+	color: white;
+
+	.game-code-label,
+	.game-code,
+	h2 {
+		text-align: center;
+		margin: 0;
+		font-weight: bold;
+	}
+
+	.game-code {
+		font-size: 80px;
+		font-weight: 300;
+	}
+
+	h2 {
+		font-size: 36px;
+		margin-top: 40px;
+	}
+
+	ul {
+		@include remove-list-styles;
+		width: 50%;
+		margin: 20px auto 40px;
+	}
 }
 
 .lobby-inner {

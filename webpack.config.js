@@ -14,11 +14,11 @@ module.exports = (env = {}) => {
 
 	return {
 		entry: {
-			client: "./app/app.js"
+			app: "./app/app.js"
 		},
 		output: {
 			path: path.resolve(__dirname + "/build"),
-			filename: isProduction ? "app.[hash].js" : "app.js"
+			filename: isProduction ? "[name].[hash].js" : "[name].js"
 		},
 		module: {
 			rules: [

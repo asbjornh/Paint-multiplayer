@@ -7,7 +7,14 @@ const Lobby = ({ gameCode, players, startGame }) => {
 	return (
 		<div className="lobby">
 			<div className="lobby-inner">
-				<h2>{gameCode}</h2>
+				<p className="game-code-label">Spillkode:</p>
+				<p className="game-code">{gameCode}</p>
+				<h2>Spillere:</h2>
+				<ul>
+					{players.map(p => (
+						<li key={p.id}>{p.name}</li>
+					))}
+				</ul>
 				<Button text="Start spill" onClick={startGame} />
 			</div>
 		</div>
@@ -17,8 +24,7 @@ const Lobby = ({ gameCode, players, startGame }) => {
 Lobby.propTypes = {
 	gameCode: PropTypes.string,
 	players: PropTypes.array,
-	startGame: PropTypes.func,
-	visible: PropTypes.bool
+	startGame: PropTypes.func
 }
 
 export default Lobby;

@@ -69,6 +69,7 @@ class JoinForm extends React.Component {
 						<div className="form-group-inner">
 							<TextInput
 								className="uppercase"
+								maxLength={4}
 								label="Spillkode"
 								onChange={this.handleGameCode.bind(this)}
 								shake={this.state.shakeGameCodeInput}

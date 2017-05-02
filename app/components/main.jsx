@@ -5,7 +5,7 @@ import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 import JoinForm from "./join-form";
 import Lobby from "./lobby";
 
-const socket = io();
+const socket = io("//localhost:3000"); // TODO: fix for production
 
 class Main extends React.Component {
 	state = {
@@ -20,12 +20,11 @@ class Main extends React.Component {
 	}
 
 	setGameCode(gameCode) {
-		this.setState({ gameCode: gameCode });
+		this.setState({ gameCode: gameCode.toUpperCase() });
 	}
 
-	joinGame(gameCode) {
+	joinGame() {
 		// join gameCode
-		console.log("join game");
 		socket.emit("join", {
 			name: this.state.playerName,
 			gamecode: this.state.gameCode
@@ -34,19 +33,17 @@ class Main extends React.Component {
 	}
 
 	createGame() {
-		console.log("create game");
-		socket.emit("creategame");
+		socket.emit("create-game");
 		this.setState({ uiState: "lobby" });
 	}
 
 	startGame() {
-		console.log("game started");
+		socket.emit("start-game", this.state.gameCode);
 		this.setState({ uiState: "" });
 	}
 
 	componentDidMount() {
 		socket.on("gamecreated", gameCode => {
-			console.log(gameCode);
 			this.setState({ gameCode: gameCode });
 			socket.emit("join", {
 				name: this.state.playerName,
@@ -54,20 +51,24 @@ class Main extends React.Component {
 			});
 		});
 
-		socket.on("debug", function (msg) {
+		socket.on("player-joined", players => {
+			this.setState({ players: players });
+		});
+
+		socket.on("debug", msg => {
 			console.log(msg);
 		});
 
-		socket.on("turnstart", function (page) {
+		socket.on("turnstart", page => {
 			// console.log("turn start", page);
 			this.setState({ page: page });
 		});
 
-		socket.on("turnend", function () {
+		socket.on("turnend", () => {
 			socket.emit("turnend", this.state.page.question);
 		});
 
-		socket.on("rate", function (pages) {
+		socket.on("rate", pages => {
 			socket.emit("rating", pages.map(function (page) {
 				page.accepted = true;
 				return page;
