@@ -12,7 +12,8 @@ class Main extends React.Component {
 		uiState: "join",
 		playerName: "",
 		gameCode: "",
-		players: []
+		players: [],
+		playerId: ""
 	};
 
 	setPlayerName(playerName) {
@@ -25,10 +26,26 @@ class Main extends React.Component {
 
 	joinGame() {
 		// join gameCode
-		socket.emit("join", {
-			name: this.state.playerName,
-			gamecode: this.state.gameCode
-		});
+		// socket.emit("join", {
+		// 	name: this.state.playerName,
+		// 	gamecode: this.state.gameCode
+		// });
+		fetch("//localhost:3000/api/join-game", {
+			method: "POST",
+			mode: "no-cors",
+			headers: {
+				"Content-Type": "text/plain",
+				'Access-Control-Allow-Origin':'*'
+			},
+			body: JSON.stringify({
+				playerName: this.state.playerName,
+				playerId: this.state.playerId,
+				gameCode: this.state.gameCode
+			})
+
+		}).then( response => {
+			console.log(response)
+		})
 		this.setState({ uiState: "lobby" });
 	}
 
@@ -49,6 +66,11 @@ class Main extends React.Component {
 				name: this.state.playerName,
 				gamecode: this.state.gameCode
 			});
+		});
+
+		socket.on("get-socket-id", playerId => {
+			console.log("got socket id", playerId);
+			this.setState({ playerId: playerId });
 		});
 
 		socket.on("player-joined", players => {

@@ -1,4 +1,4 @@
-var Game = function(numRounds) {
+var Game = function (numRounds) {
 	const self = this,
 		words = require("./words");
 
@@ -12,25 +12,25 @@ var Game = function(numRounds) {
 		self.gameInProgress = true
 		self.createBooks()
 
-		self.players.forEach((player) => {
+		self.players.forEach( player => {
 			player.score = 0
 		})
 	}
 
-	self.getPlayer = (id) => {
+	self.getPlayer = playerId => {
 		for (var i=0; i<self.players.length; i++) {
-			if (self.players[i].id === id) return self.players[i]
+			if (self.players[i].playerId === playerId) return self.players[i]
 		}
 	}
 
 	self.getReadyState = () => {
-		return self.players.every((player) => {
+		return self.players.every( player => {
 			return player.ready
 		})
 	}
 
-	self.setReadyState = (readyState) => {
-		self.players.forEach((player) => {
+	self.setReadyState = readyState => {
+		self.players.forEach(player => {
 			player.ready = readyState
 		})
 	}
@@ -39,29 +39,29 @@ var Game = function(numRounds) {
 		// Checks if there are more turns left in this round. Returns true if there are more turns
 		if (self.players.length % 2 === 0) {
 			// If the first player has his own book, the round is over
-			return self.players[0].id !== self.players[0].book.owner
+			return self.players[0].playerId !== self.players[0].book.owner
 		} else {
 			// If the next player has the first players book, the round is over
-			return self.players[0].id !== self.players[1].book.owner
+			return self.players[0].playerId !== self.players[1].book.owner
 		}
 	}
 
 	self.returnBooksToOwner = () => {
-		while (self.players[0].id !== self.players[0].book.owner) {
+		while (self.players[0].playerId !== self.players[0].book.owner) {
 			self.rotateBooks()
 		}
 	}
 
 	self.createBooks = () => {
-		self.players.forEach((player) => {
+		self.players.forEach(player => {
 			player.book = {
-				owner: player.id,
+				owner: player.playerId,
 				pages: [
 					{
 						question: 	words.easy[Math.floor(Math.random() * words.easy.length)],
 						type: 		"draw",
-						name: 		player.name,
-						playerId: 	player.id
+						playerName: player.playerName,
+						playerId: 	player.playerId
 					}
 				]
 			}
@@ -69,20 +69,20 @@ var Game = function(numRounds) {
 	}
 
 	self.addPages = () => {
-		self.players.forEach((player) => {
+		self.players.forEach(player => {
 			var lastPage = player.book.pages.slice(-1)[0]
 
 			player.book.pages.push({
 				question: 	lastPage.answer,
-				type: 		lastPage.type == "draw" ? "guess" : "draw",
-				name: 		player.name,
-				playerId: 	player.id
+				type: 		lastPage.type === "draw" ? "guess" : "draw",
+				playerName: player.playerName,
+				playerId: 	player.playerId
 			})
 		})
 	}
 
 	self.rotateBooks = () => {
-		var books = self.players.map((player) => {
+		var books = self.players.map(player => {
 			return player.book
 		})
 
@@ -94,9 +94,9 @@ var Game = function(numRounds) {
 		})
 	}
 
-	self.rate = (ratedPages) => {
+	self.rate = ratedPages => {
 		// Assign points to other player based on player ratings
-		ratedPages.forEach((page) => {
+		ratedPages.forEach(page => {
 			if (page.accepted) {
 				self.getPlayer(page.playerId).score++
 			}
