@@ -12,22 +12,20 @@ const Coordinator = function (io) {
 		return io.sockets.in(roomId)
 	}
 
-	this.addPlayerToGame = function (playerName, playerId, gameCode) {
-		console.log(playerId)
-		console.log(io.sockets.connected)
-		getSocket(playerId).join(gameCode)
-		// socket.join(gameCode)
-		// socket.player = player
+	this.addPlayerToGame = function (data) {
+		// data = { playerName, playerId, gameCode }
 
-		const game = games[gameCode]
+		const game = games[data.gameCode]
 
 		if (game && !game.gameInProgress) {
+			getSocket(data.playerId).join(data.gameCode)
+
 			game.players.push({
-				playerName: playerName,
-				playerId:   playerId
+				playerName: data.playerName,
+				playerId:   data.playerId
 			})
 
-			getSockets(gameCode).emit("player-joined", game.players)
+			getSockets(data.gameCode).emit("get-player-list", game.players)
 			return true;
 		}
 
@@ -45,7 +43,7 @@ const Coordinator = function (io) {
 		game.setReadyState(false)
 		game.players.forEach(player => {
 			// Send each player the last page of his current book
-			getSocket(player.playerId).emit("turnstart", player.book.pages.slice(-1)[0])
+			getSocket(player.playerId).emit("turn-start", player.book.pages.slice(-1)[0])
 
 			// var socket = getSocket(player.playerId),
 			// 	page = player.book.pages.slice(-1)[0]
@@ -54,8 +52,8 @@ const Coordinator = function (io) {
 		})
 
 		setTimeout(function () {
-			getSockets(game.gameCode).emit("turnend")
-		}, 1000)
+			getSockets(game.gameCode).emit("turn-end")
+		}, 10000)
 	}
 
 	const rate = game => {
@@ -76,12 +74,19 @@ const Coordinator = function (io) {
 		turn(game)
 	}
 
-	this.submitPage = function (answer, gameCode, playerId) {
-		const game = games[gameCode]
-		const player = game.getPlayer(playerId)
+	this.startRound = function (gameCode) {
+		var game = games[gameCode]
+		game.createBooks()
+		turn(game)
+	}
+
+	this.submitPage = function (data) {
+		// data  { gameCode, playerId, answer }
+		const game = games[data.gameCode]
+		const player = game.getPlayer(data.playerId)
 
 		// Assign answer to last page of book
-		player.book.pages.slice(-1)[0].answer = answer
+		player.book.pages.slice(-1)[0].answer = data.answer
 		player.ready = true
 
 		// Check that everyone has submitted answer
@@ -96,8 +101,8 @@ const Coordinator = function (io) {
 				turn(game)
 			} else {
 				// Round over
-				getSockets(gameCode).emit("debug", "round over")
-				getSockets(gameCode).emit("debug", game.players.map(p => p.book.pages))
+				getSockets(data.gameCode).emit("debug", "round over")
+				getSockets(data.gameCode).emit("debug", game.players.map(p => p.book.pages))
 				game.returnBooksToOwner
 				game.remainingRounds--
 
@@ -106,24 +111,33 @@ const Coordinator = function (io) {
 		}
 	}
 
-	this.submitRating = function (ratedPages, gameCode, playerId) {
-		const game = games[gameCode]
-		const player = game.getPlayer(playerId)
+	this.submitRating = function (data) {
+		// data = { gameCode, playerId, ratedPages }
+		const game = games[data.gameCode]
+		const player = game.getPlayer(data.playerId)
 
-		game.rate(ratedPages)
+		game.rate(data.ratedPages)
 
 		player.ready = true
+
+		getSockets(data.gameCode).emit("get-player-list", game.players.map( p => {
+			return {
+				playerName: p.playerName,
+				playerId: p.playerId,
+				score: p.score,
+				ready: p.ready
+			}
+		}))
 
 		if (game.getReadyState()) {
 			// Check if game is over
 			if (game.remainingRounds === 0) {
 				// Game over
-				getSockets(gameCode).emit("debug", "game over")
-				getSockets(gameCode).emit("debug", game.players)
+				getSockets(data.gameCode).emit("game-over")
+				getSockets(data.gameCode).emit("debug", game.players)
 			} else {
-				// New round
-				game.createBooks()
-				turn(game)
+				// Ready for new round
+				getSockets(data.gameCode).emit("get-round-ready-state", true);
 			}
 		}
 	}

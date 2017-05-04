@@ -12,7 +12,7 @@ const Lobby = ({ gameCode, players, startGame }) => {
 				<h2>Spillere:</h2>
 				<ul>
 					{players.map(p => (
-						<li key={p.id}>{p.name}</li>
+						<li key={p.playerId}>{p.playerName}</li>
 					))}
 				</ul>
 				<Button text="Start spill" onClick={startGame} />

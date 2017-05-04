@@ -2,8 +2,11 @@ import React from "react";
 import io from "socket.io-client";
 import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 
+import api from "../api-helper";
 import JoinForm from "./join-form";
 import Lobby from "./lobby";
+import Guess from "./guess";
+import Draw from "./draw";
 
 const socket = io("//localhost:3000"); // TODO: fix for production
 
@@ -25,76 +28,84 @@ class Main extends React.Component {
 	}
 
 	joinGame() {
-		// join gameCode
-		// socket.emit("join", {
-		// 	name: this.state.playerName,
-		// 	gamecode: this.state.gameCode
-		// });
-		fetch("//localhost:3000/api/join-game", {
-			method: "POST",
-			mode: "no-cors",
-			headers: {
-				"Content-Type": "text/plain",
-				'Access-Control-Allow-Origin':'*'
-			},
-			body: JSON.stringify({
-				playerName: this.state.playerName,
-				playerId: this.state.playerId,
-				gameCode: this.state.gameCode
-			})
-
-		}).then( response => {
-			console.log(response)
-		})
-		this.setState({ uiState: "lobby" });
+		api.joinGame({
+			gameCode: this.state.gameCode,
+			playerName: this.state.playerName,
+			playerId: this.state.playerId
+		}, res => {
+			if (res.isSuccess) {
+				this.setState({ uiState: "lobby" });
+			}
+		});
 	}
 
 	createGame() {
-		socket.emit("create-game");
-		this.setState({ uiState: "lobby" });
+		api.createGame(res => {
+			this.setState({ gameCode: res.gameCode });
+			this.joinGame();
+		});
 	}
 
 	startGame() {
-		socket.emit("start-game", this.state.gameCode);
-		this.setState({ uiState: "" });
+		api.startGame({ gameCode: this.state.gameCode });
+	}
+
+	startRound() {
+		api.startRound({ gameCode: this.state.gameCode });
+	}
+
+	updateAnswer(answer) {
+		const currentPage = this.state.currentPage;
+		currentPage.answer = answer;
+		this.setState({ currentPage: currentPage });
 	}
 
 	componentDidMount() {
-		socket.on("gamecreated", gameCode => {
-			this.setState({ gameCode: gameCode });
-			socket.emit("join", {
-				name: this.state.playerName,
-				gamecode: this.state.gameCode
-			});
-		});
-
 		socket.on("get-socket-id", playerId => {
-			console.log("got socket id", playerId);
 			this.setState({ playerId: playerId });
 		});
 
-		socket.on("player-joined", players => {
+		socket.on("get-player-list", players => {
 			this.setState({ players: players });
 		});
 
-		socket.on("debug", msg => {
-			console.log(msg);
+		socket.on("get-round-ready-state", isReady => {
+			this.setState({ readyForRound: isReady });
+		})
+
+		socket.on("turn-start", page => {
+			console.log("turn start", page);
+			this.setState({ uiState: "game", currentPage: page });
 		});
 
-		socket.on("turnstart", page => {
-			// console.log("turn start", page);
-			this.setState({ page: page });
-		});
-
-		socket.on("turnend", () => {
-			socket.emit("turnend", this.state.page.question);
+		socket.on("turn-end", () => {
+			console.log("turn end");
+			api.submitPage({
+				gameCode: this.state.gameCode,
+				playerId: this.state.playerId,
+				answer: this.state.currentPage.answer
+			})
 		});
 
 		socket.on("rate", pages => {
-			socket.emit("rating", pages.map(function (page) {
-				page.accepted = true;
-				return page;
-			}));
+			// TODO: create view and stuff
+			this.setState({ uiState: "rate" });
+			api.submitRating({
+				gameCode: this.state.gameCode,
+				playerId: this.state.playerId,
+				ratedPages: pages.map( page => {
+					page.accepted = true;
+					return page;
+				})
+			})
+		});
+
+		socket.on("game-over", () => {
+			this.setState({ uiState: "summary", gameOver: true });
+		})
+
+		socket.on("debug", msg => {
+			console.log(msg);
 		});
 	}
 
@@ -113,7 +124,7 @@ class Main extends React.Component {
 					>
 						{this.state.uiState === "join" &&
 							<JoinForm
-								key={1}
+								key={"join"}
 								createGame={this.createGame.bind(this)}
 								joinGame={this.joinGame.bind(this)}
 								gameCode={this.state.gameCode}
@@ -124,11 +135,39 @@ class Main extends React.Component {
 						}
 						{this.state.uiState === "lobby" &&
 							<Lobby
-								key={2}
+								key={"lobby"}
 								gameCode={this.state.gameCode}
 								players={this.state.players}
 								startGame={this.startGame.bind(this)}
 							/>
+						}
+						{this.state.uiState === "game" && this.state.currentPage.type === "draw" &&
+							<Draw
+								key={"draw"}
+								question={this.state.currentPage.question}
+								updateAnswer={this.updateAnswer.bind(this)}
+							/>
+						}
+						{this.state.uiState === "game" && this.state.currentPage.type === "guess" &&
+							<Guess
+								key={"guess"}
+								question={this.state.currentPage.question}
+								updateAnswer={this.updateAnswer.bind(this)}
+							/>
+						}
+						{this.state.uiState === "rate" &&
+							<div key={"rate"}>
+								<p>Gi poeng</p>
+								<button
+									onClick={this.startRound.bind(this)}
+									disabled={this.state.readyForRound !== true}
+								>
+									<span>Start neste rune</span>
+								</button>
+							</div>
+						}
+						{this.state.uiState === "summary" &&
+							<div key={"summary"}>Spill ferdig</div>
 						}
 					</CSSTransitionGroup>
 			</div>

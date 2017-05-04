@@ -19,11 +19,41 @@ app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/index.html")
 })
 
-app.post("/api/join-game", function (req, res) {
-	const player = req.body
-	console.log(player)
-	res.json({ isSuccess: coordinator.addPlayerToGame(player.playerName, player.playerId, player.gameCode) })
-});
+// TODO: remove this
+app.use(function (req, res, next) {
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+	res.header("Access-Control-Allow-Methods", "GET, POST");
+	next();
+})
+
+app.post("/api/join-game", (req, res) => {
+	res.json({ isSuccess: req.body && coordinator.addPlayerToGame(req.body) })
+})
+
+app.get("/api/create-game", (req, res) => {
+	res.json({ gameCode: coordinator.createGame() })
+})
+
+app.post("/api/start-game", (req, res) => {
+	coordinator.startGame(req.body.gameCode)
+	res.end()
+})
+
+app.post("/api/start-round", (req, res) => {
+	coordinator.startRound(req.body.gameCode)
+	res.end()
+})
+
+app.post("/api/submit-page", (req, res) => {
+	req.body && coordinator.submitPage(req.body)
+	res.end()
+})
+
+app.post("/api/submit-rating", (req, res) => {
+	req.body && coordinator.submitRating(req.body)
+	res.end()
+})
 
 app.get(/^(.+)$/, (req, res) => {
 	// console.log('static file request : ' + req.params[0])
