@@ -1,6 +1,7 @@
 .lobby {
 	@include full-screen;
 	@include slide-in;
+	@include slide-out;
 	color: white;
 
 	.game-code-label,

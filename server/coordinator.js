@@ -51,9 +51,9 @@ const Coordinator = function (io) {
 			// socket.emit("turnstart", page)
 		})
 
-		setTimeout(function () {
-			getSockets(game.gameCode).emit("turn-end")
-		}, 10000)
+		// setTimeout(function () {
+		// 	getSockets(game.gameCode).emit("turn-end")
+		// }, 10000)
 	}
 
 	const rate = game => {

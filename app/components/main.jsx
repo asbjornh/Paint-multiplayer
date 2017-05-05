@@ -3,6 +3,9 @@ import io from "socket.io-client";
 import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 
 import api from "../api-helper";
+import Globals from "../../globals";
+
+import Countdown from "./countdown";
 import JoinForm from "./join-form";
 import Lobby from "./lobby";
 import Guess from "./guess";
@@ -11,12 +14,15 @@ import Draw from "./draw";
 const socket = io("//localhost:3000"); // TODO: fix for production
 
 class Main extends React.Component {
+	timer
+
 	state = {
 		uiState: "join",
 		playerName: "",
 		gameCode: "",
 		players: [],
-		playerId: ""
+		playerId: "",
+		turnTimeRemaining: 0
 	};
 
 	setPlayerName(playerName) {
@@ -75,7 +81,10 @@ class Main extends React.Component {
 
 		socket.on("turn-start", page => {
 			console.log("turn start", page);
-			this.setState({ uiState: "game", currentPage: page });
+			this.setState({ uiState: "game", currentPage: page, turnTimeRemaining: Globals.turnDuration });
+			this.timer = setInterval(() => {
+				this.setState({ turnTimeRemaining: this.state.turnTimeRemaining - 0.1 });
+			}, 100);
 		});
 
 		socket.on("turn-end", () => {
@@ -85,6 +94,7 @@ class Main extends React.Component {
 				playerId: this.state.playerId,
 				answer: this.state.currentPage.answer
 			})
+			window.clearInterval(this.timer);
 		});
 
 		socket.on("rate", pages => {
@@ -111,66 +121,74 @@ class Main extends React.Component {
 
 	render() {
 		return (
-			<div>
-				<div className={`logo ${ this.state.uiState === "join" ? "is-large" : "" }`}>
-					<div className="logo-main" />
-					<div className="logo-shadow" />
-				</div>
-					<CSSTransitionGroup
-						className="transition-container"
-						transitionName="view"
-						transitionEnterTimeout={700}
-						transitionLeaveTimeout={700}
-					>
-						{this.state.uiState === "join" &&
-							<JoinForm
-								key={"join"}
-								createGame={this.createGame.bind(this)}
-								joinGame={this.joinGame.bind(this)}
-								gameCode={this.state.gameCode}
-								playerName={this.state.playerName}
-								setPlayerName={this.setPlayerName.bind(this)}
-								setGameCode={this.setGameCode.bind(this)}
-							/>
-						}
-						{this.state.uiState === "lobby" &&
-							<Lobby
-								key={"lobby"}
-								gameCode={this.state.gameCode}
-								players={this.state.players}
-								startGame={this.startGame.bind(this)}
-							/>
-						}
-						{this.state.uiState === "game" && this.state.currentPage.type === "draw" &&
-							<Draw
-								key={"draw"}
-								question={this.state.currentPage.question}
-								updateAnswer={this.updateAnswer.bind(this)}
-							/>
-						}
-						{this.state.uiState === "game" && this.state.currentPage.type === "guess" &&
-							<Guess
-								key={"guess"}
-								question={this.state.currentPage.question}
-								updateAnswer={this.updateAnswer.bind(this)}
-							/>
-						}
-						{this.state.uiState === "rate" &&
-							<div key={"rate"}>
-								<p>Gi poeng</p>
-								<button
-									onClick={this.startRound.bind(this)}
-									disabled={this.state.readyForRound !== true}
-								>
-									<span>Start neste rune</span>
-								</button>
-							</div>
-						}
-						{this.state.uiState === "summary" &&
-							<div key={"summary"}>Spill ferdig</div>
-						}
-					</CSSTransitionGroup>
-			</div>
+			<CSSTransitionGroup
+				className="transition-container"
+				transitionName="view"
+				transitionEnterTimeout={700}
+				transitionLeaveTimeout={700}
+			>
+				{this.state.uiState !== "game" &&
+					<div className={`logo ${ this.state.uiState === "join" ? "is-large" : "" }`}>
+						<div className="logo-content">
+							<div className="logo-main" />
+							<div className="logo-shadow" />
+						</div>
+					</div>
+				}
+				{this.state.uiState === "game" &&
+					<Countdown
+						currentTime={this.state.turnTimeRemaining}
+						totalTime={Globals.turnDuration}
+					/>
+				}
+				{this.state.uiState === "join" &&
+					<JoinForm
+						key={"join"}
+						createGame={this.createGame.bind(this)}
+						joinGame={this.joinGame.bind(this)}
+						gameCode={this.state.gameCode}
+						playerName={this.state.playerName}
+						setPlayerName={this.setPlayerName.bind(this)}
+						setGameCode={this.setGameCode.bind(this)}
+					/>
+				}
+				{this.state.uiState === "lobby" &&
+					<Lobby
+						key={"lobby"}
+						gameCode={this.state.gameCode}
+						players={this.state.players}
+						startGame={this.startGame.bind(this)}
+					/>
+				}
+				{this.state.uiState === "game" && this.state.currentPage.type === "draw" &&
+					<Draw
+						key={"draw"}
+						question={this.state.currentPage.question}
+						updateAnswer={this.updateAnswer.bind(this)}
+					/>
+				}
+				{this.state.uiState === "game" && this.state.currentPage.type === "guess" &&
+					<Guess
+						key={"guess"}
+						question={this.state.currentPage.question}
+						updateAnswer={this.updateAnswer.bind(this)}
+					/>
+				}
+				{this.state.uiState === "rate" &&
+					<div key={"rate"}>
+						<p>Gi poeng</p>
+						<button
+							onClick={this.startRound.bind(this)}
+							disabled={this.state.readyForRound !== true}
+						>
+							<span>Start neste rune</span>
+						</button>
+					</div>
+				}
+				{this.state.uiState === "summary" &&
+					<div key={"summary"}>Spill ferdig</div>
+				}
+			</CSSTransitionGroup>
 		);
 	}
 }

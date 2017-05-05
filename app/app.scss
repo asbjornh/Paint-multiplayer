@@ -2,10 +2,12 @@
 @import "styles/vars";
 @import "styles/mixins";
 
+@import "styles/countdown";
 @import "styles/button";
 @import "styles/input";
 @import "styles/form";
 @import "styles/lobby";
+@import "styles/draw";
 
 
 *, *:before, *:after {
@@ -26,13 +28,6 @@ body, input, button {
 	outline: none;
 }
 
-canvas {
-	display: none;
-	position: fixed;
-	height: 100%;
-	width: 100%;
-}
-
 #app {
 	background: linear-gradient(-45deg, $lime, $yellow, $red 90%);
 }
@@ -43,14 +38,21 @@ canvas {
 }
 
 .logo {
+	@include slide-in;
+	@include slide-out;
 	position: absolute;
 	height: 200px;
 	width: 100%;
-	transform: translateY(-100px);
-	transition: transform .4s $ease-out-back;
+}
 
-	&.is-large {
-		transform: none;
+.logo-content {
+	position: relative;
+	height: 100%;
+	transform: scale(0.5) translateY(-100px);
+	transition: transform .5s $ease-in-back-out;
+
+	.is-large & {
+		transform: translateZ(0);
 	}
 }
 
@@ -62,12 +64,7 @@ canvas {
 	width: 172px;
 	height: 118px;
 	background-image: url(../assets/img/logo.svg);
-	transform: translate(-50%, -50%) translateY(50px) scale(0.5);
-	transition: transform .4s $ease-out-back;
-
-	.is-large & {
-		transform: translate(-50%, -50%);
-	}
+	transform: translate(-50%, -50%);
 }
 
 .logo-shadow {
@@ -77,10 +74,6 @@ canvas {
 	width: 172px;
 	height: 118px;
 	background-image: url(../assets/img/logo-red.svg);
-	transform: translate(-50%, -50%) translateY(64px) scale(0.5);
+	transform: translate(-50%, -50%) translateY(14px);
 	filter: blur(8px);
-
-	.is-large & {
-		transform: translate(-50%, -50%) translateY(14px);
-	}
 }

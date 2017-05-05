@@ -4,9 +4,6 @@ import PropTypes from "prop-types";
 import DrawUtils from "../draw-utils";
 
 
-const segmentLength = 4,
-	smoothLength = 3;
-
 class Draw extends React.Component {
 	static propTypes = {
 		question: PropTypes.string,
@@ -14,59 +11,68 @@ class Draw extends React.Component {
 	}
 
 	state = {
-		isMouseDown: false
+		timeRemaining: 30
 	}
 
 	currentLine = []
 	paths = []
+	timer
 
 	drawHandler(coords) {
 		this.currentLine.push({
-			x: coords.clientX,
-			y: coords.clientY
+			x: coords.clientX - this.canvas.getBoundingClientRect().left,
+			y: coords.clientY - this.canvas.getBoundingClientRect().top
 		});
 
-		if (this.currentLine.length > smoothLength) {
-			this.currentLine = DrawUtils.smoothPoints(this.currentLine);
-		}
+		this.currentLine = DrawUtils.smoothPoints(this.currentLine);
 
-		if (this.currentLine.length > segmentLength) {
-			DrawUtils.drawLine(this.ctx, this.currentLine.slice(-segmentLength));
-		}
+		DrawUtils.drawLine(this.ctx, this.currentLine);
+	}
+
+	onTouchStart = e => {
+		this.drawHandler(e.touches[0]);
+	}
+
+	onTouchMove = e => {
+		this.drawHandler(e.touches[0]);
+	}
+
+	onTouchEnd = () => {
+		this.paths.push(this.currentLine);
+		this.props.updateAnswer(this.paths);
+		this.currentLine = [];
 	}
 
 	componentDidMount() {
-		this.props.updateAnswer(["blabla", "blahdi blah"]);
-
 		this.ctx = this.canvas.getContext("2d");
+		this.canvas.width = this.canvas.offsetWidth * window.devicePixelRatio;
+		this.canvas.height = this.canvas.offsetHeight * window.devicePixelRatio;
 
-		this.canvas.width = window.innerWidth * window.devicePixelRatio;
-		this.canvas.height = window.innerHeight * window.devicePixelRatio;
+		this.timer = setInterval(() => {
+			this.setState({ timeRemaining: this.state.timeRemaining - 1 });
+		}, 1000);
+	}
 
-		if (!DrawUtils.isTouch) {
-			this.canvas.addEventListener("mousedown", () => { this.isMouseDown = true; })
-		}
-
-		this.canvas.addEventListener(DrawUtils.isTouch ? "touchmove" : "mousemove", e => {
-			if (DrawUtils.isTouch || this.isMouseDown) {
-				this.drawHandler(DrawUtils.isTouch ? e.touches[0] : e);
-			}
-		})
-
-		this.canvas.addEventListener(DrawUtils.isTouch ? "touchend" : "mouseup", () => {
-			this.isMouseDown = false;
-
-			this.paths.push(this.currentLine);
-			this.updateAnswer(this.paths);
-			this.currentLine = [];
-		})
+	componentWillUnmount() {
+		window.clearInterVal(this.timer);
+		this.timer = null;
 	}
 
 	render() {
 		return (
 			<div className="draw">
-				{this.props.question}
-				<canvas ref={c => { this.canvas = c; }} />
+				<div className="draw-content">
+					<div className="draw-header">
+						<p className="draw-label">Du skal tegne:</p>
+						<p className="draw-question">{this.props.question}</p>
+					</div>
+					<canvas
+						ref={c => { this.canvas = c; }}
+						onTouchStart={this.onTouchStart}
+						onTouchMove={this.onTouchMove}
+						onTouchEnd={this.onTouchEnd}
+					/>
+				</div>
 			</div>
 		);
 	}

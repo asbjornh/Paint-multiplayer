@@ -1,0 +1,49 @@
+.draw {
+	@include full-screen;
+	@include slide-in;
+	@include slide-out;
+}
+
+.draw-content {
+	@include content-container;
+	background-color: white;
+	border-radius: 30px;
+	max-width: none;
+	height: auto;
+	max-height: 600px;
+	bottom: 20px;
+	overflow: hidden;
+
+	canvas {
+		position: absolute;
+		left: 0;
+		top: 100px;
+		width: 100%;
+		height: calc(100% - 100px);
+	}
+}
+
+.draw-header {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
+	padding: 0 20px;
+	box-shadow: 0 0 20px 15px white;
+
+	p {
+		margin: 0;
+		text-align: center;
+	}
+}
+
+.draw-label {
+	font-weight: bold;
+	text-transform: uppercase;
+	font-size: 20px;
+	letter-spacing: 0.5px;
+	color: $red;
+}

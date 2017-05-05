@@ -1,0 +1,53 @@
+.countdown {
+	@include slide-in;
+	@include slide-out;
+	position: absolute;
+	z-index: 2;
+	width: 100%;
+	height: 100px;
+	color: white;
+}
+
+.countdown-content {
+	position: relative;
+	height: 100%;
+	animation: pulsate 2s linear infinite;
+
+	.pulsate-faster & {
+		animation: pulsate 1s linear infinite;
+	}
+
+	.pulsate-crazy & {
+		animation: pulsate 0.5s linear infinite;
+	}
+}
+
+.countdown-time {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0;
+	transform: translate(-50%, -50%);
+}
+
+.countdown-circle {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+
+	div {
+		border-radius: 100%;
+		box-shadow: inset 0 0 0 12px rgba(white, 0.3);
+		transform: translate(-50%, -50%) rotate(90deg) scaleX(-1);
+	}
+
+	svg {
+		display: block;
+	}
+}
+
+@keyframes pulsate {
+	0%  { transform: scale(1); }
+	5%  { transform: scale(1.1); }
+	100% { transform: scale(1); }
+}
