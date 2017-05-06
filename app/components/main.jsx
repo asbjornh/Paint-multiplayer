@@ -8,8 +8,9 @@ import Globals from "../../globals";
 import Countdown from "./countdown";
 import JoinForm from "./join-form";
 import Lobby from "./lobby";
-import Guess from "./guess";
 import Draw from "./draw";
+import Guess from "./guess";
+import Rate from "./rate";
 
 const socket = io("//localhost:3000"); // TODO: fix for production
 
@@ -23,7 +24,8 @@ class Main extends React.Component {
 		players: [],
 		playerId: "",
 		turnTimeRemaining: 0,
-		difficulty: "easy"
+		difficulty: "easy",
+		pagesToRate: []
 	};
 
 	setPlayerName(playerName) {
@@ -71,6 +73,17 @@ class Main extends React.Component {
 		this.setState({ currentPage: currentPage });
 	}
 
+	submitRating(pages) {
+		api.submitRating({
+			gameCode: this.state.gameCode,
+			playerId: this.state.playerId,
+			ratedPages: pages.map( page => {
+				page.accepted = true;
+				return page;
+			})
+		})
+	}
+
 	componentDidMount() {
 		socket.on("get-socket-id", playerId => {
 			this.setState({ playerId: playerId });
@@ -105,15 +118,7 @@ class Main extends React.Component {
 
 		socket.on("rate", pages => {
 			// TODO: create view and stuff
-			this.setState({ uiState: "rate" });
-			api.submitRating({
-				gameCode: this.state.gameCode,
-				playerId: this.state.playerId,
-				ratedPages: pages.map( page => {
-					page.accepted = true;
-					return page;
-				})
-			})
+			this.setState({ uiState: "rate", pagesToRate: pages });
 		});
 
 		socket.on("game-over", () => {
@@ -185,15 +190,11 @@ class Main extends React.Component {
 					/>
 				}
 				{this.state.uiState === "rate" &&
-					<div key={"rate"}>
-						<p>Gi poeng</p>
-						<button
-							onClick={this.startRound.bind(this)}
-							disabled={this.state.readyForRound !== true}
-						>
-							<span>Start neste rune</span>
-						</button>
-					</div>
+					<Rate
+						key={"rate"}
+						pages={this.state.pagesToRate}
+						submitRating={this.submitRating.bind(this)}
+					/>
 				}
 				{this.state.uiState === "summary" &&
 					<div key={"summary"}>Spill ferdig</div>

@@ -24,6 +24,7 @@
 	ul {
 		@include remove-list-styles;
 		display: inline-flex;
+		flex-direction: column;
 		min-width: 50%;
 		overflow: auto;
 		color: black;

@@ -3,6 +3,7 @@
 @import "styles/mixins";
 @import "styles/typography";
 
+@import "styles/card";
 @import "styles/countdown";
 @import "styles/button";
 @import "styles/input";
@@ -11,6 +12,7 @@
 @import "styles/lobby";
 @import "styles/draw";
 @import "styles/guess";
+@import "styles/rate";
 
 
 *, *:before, *:after {

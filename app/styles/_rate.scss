@@ -1,0 +1,12 @@
+.rate {
+	@include card;
+}
+
+.rate-content {
+	@include card-content;
+	overflow: auto;
+}
+
+.rate-header {
+	@include card-header;
+}

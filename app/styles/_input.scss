@@ -1,5 +1,6 @@
 .text-input {
 	position: relative;
+	width: 100%;
 	height: 0;
 	padding-top: 26.185%;
 
@@ -14,46 +15,59 @@
 		width: 100%;
 		top: 0;
 		left: 0;
+		background-size: 100%;
 		background-image: url(../assets/img/input.svg);
+	}
+
+	&.is-dark {
+		&:before {
+			background-image: url(../assets/img/input-black.svg);
+		}
+
+		input {
+			color: black;
+			font-weight: normal;
+		}
 	}
 
 	&.uppercase input {
 		text-transform: uppercase;
 	}
-}
 
-.text-input input {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	top: 0;
-	z-index: 1;
-	appearance: none;
-	border: none;
-	background-color: transparent;
-	text-align: center;
-	color: white;
-	font-weight: bold;
+	input {
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		top: 0;
+		padding: 0 10px;
+		z-index: 1;
+		appearance: none;
+		border: none;
+		background-color: transparent;
+		text-align: center;
+		color: white;
+		font-weight: bold;
 
-	&::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-		text-transform: none;
-		color: white;
-		opacity: 1;
-	}
-	&::-moz-placeholder { /* Firefox 19+ */
-		text-transform: none;
-		color: white;
-		opacity: 1;
-	}
-	&:-ms-input-placeholder { /* IE 10+ */
-		text-transform: none;
-		color: white;
-		opacity: 1;
-	}
-	&:-moz-placeholder { /* Firefox 18- */
-		text-transform: none;
-		color: white;
-		opacity: 1;
+		&::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+			text-transform: none;
+			color: white;
+			opacity: 1;
+		}
+		&::-moz-placeholder { /* Firefox 19+ */
+			text-transform: none;
+			color: white;
+			opacity: 1;
+		}
+		&:-ms-input-placeholder { /* IE 10+ */
+			text-transform: none;
+			color: white;
+			opacity: 1;
+		}
+		&:-moz-placeholder { /* Firefox 18- */
+			text-transform: none;
+			color: white;
+			opacity: 1;
+		}
 	}
 }
 
