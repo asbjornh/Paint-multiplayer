@@ -2,19 +2,18 @@
 	@include full-screen;
 	@include slide-in;
 	@include slide-out;
-	color: white;
 
-	.game-code-label,
-	.game-code,
-	h2 {
-		text-align: center;
+	p {
+		@include uppercase-label;
 		margin: 0;
-		font-weight: bold;
 	}
 
 	.game-code {
+		color: black;
 		font-size: 80px;
 		font-weight: 300;
+		line-height: 0.8;
+		margin-bottom: 40px;
 	}
 
 	h2 {
@@ -24,11 +23,34 @@
 
 	ul {
 		@include remove-list-styles;
-		width: 50%;
-		margin: 20px auto 40px;
+		display: inline-flex;
+		min-width: 50%;
+		overflow: auto;
+		color: black;
+		text-align: left;
+	}
+
+	.difficulty-label {
+		margin-top: auto;
 	}
 }
 
 .lobby-inner {
 	@include content-container;
+	display: flex;
+	flex-direction: column;
+
+	> * {
+		width: 100%;
+	}
+}
+
+.lobby-information {
+	flex-grow: 1;
+	padding: 20px 30px;
+	background-color: white;
+	border-radius: 30px;
+	box-shadow: 0 20px 40px rgba($red, 0.5);
+	color: $red;
+	text-align: center;
 }

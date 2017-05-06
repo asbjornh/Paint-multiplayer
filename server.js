@@ -36,7 +36,7 @@ app.get("/api/create-game", (req, res) => {
 })
 
 app.post("/api/start-game", (req, res) => {
-	coordinator.startGame(req.body.gameCode)
+	coordinator.startGame(req.body.gameCode, req.body.difficulty)
 	res.end()
 })
 

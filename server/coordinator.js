@@ -66,12 +66,14 @@ const Coordinator = function (io) {
 		})
 	}
 
-	this.startGame = function (gameCode) {
+	this.startGame = function (gameCode, difficulty) {
 		var game = games[gameCode]
 
-		game.startGame()
-		getSockets(gameCode).emit("debug", "game started")
-		turn(game)
+		if (!game.gameInProgress) {
+			game.startGame(difficulty)
+			getSockets(gameCode).emit("debug", "game started")
+			turn(game)
+		}
 	}
 
 	this.startRound = function (gameCode) {

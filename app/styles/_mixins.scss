@@ -27,7 +27,7 @@
 		opacity: 1;
 	}
 
-	&.view-leave.view-leave-active {
+	&.view-leave-active {
 		transform: translateX(-100%);
 		opacity: 0;
 		transition: transform .6s $ease-in-back-out, opacity .6s $ease-in-back-out;
@@ -40,9 +40,22 @@
 		opacity: 0;
 	}
 
-	&.view-enter.view-enter-active {
+	&.view-enter-active {
 		transform: none;
 		opacity: 1;
 		transition: transform .4s .3s $ease-out-back, opacity .4s .3s $ease-out-back;
+	}
+}
+
+@mixin appear-fade-in {
+	&.view-appear {
+		transform: scale(0.9);
+		opacity: 0;
+	}
+
+	&.view-appear-active {
+		transform: none;
+		opacity: 1;
+		transition: transform .6s $ease-out, opacity .6s $ease-out;
 	}
 }

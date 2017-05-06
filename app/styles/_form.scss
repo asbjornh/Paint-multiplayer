@@ -1,8 +1,13 @@
 .form {
 	@include full-screen;
 	@include slide-out;
+	@include appear-fade-in;
 	color: white;
 	overflow: hidden;
+
+	&.view-appear-active {
+		transform-origin: 50% 40%;
+	}
 
 	.text-input, button {
 		width: 100%;

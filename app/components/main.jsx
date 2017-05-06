@@ -22,7 +22,8 @@ class Main extends React.Component {
 		gameCode: "",
 		players: [],
 		playerId: "",
-		turnTimeRemaining: 0
+		turnTimeRemaining: 0,
+		difficulty: "easy"
 	};
 
 	setPlayerName(playerName) {
@@ -31,6 +32,10 @@ class Main extends React.Component {
 
 	setGameCode(gameCode) {
 		this.setState({ gameCode: gameCode.toUpperCase() });
+	}
+
+	setDifficulty(difficulty) {
+		this.setState({ difficulty: difficulty });
 	}
 
 	joinGame() {
@@ -53,7 +58,7 @@ class Main extends React.Component {
 	}
 
 	startGame() {
-		api.startGame({ gameCode: this.state.gameCode });
+		api.startGame({ gameCode: this.state.gameCode, difficulty: this.state.difficulty });
 	}
 
 	startRound() {
@@ -124,6 +129,8 @@ class Main extends React.Component {
 			<CSSTransitionGroup
 				className="transition-container"
 				transitionName="view"
+				transitionAppear={true}
+				transitionAppearTimeout={700}
 				transitionEnterTimeout={700}
 				transitionLeaveTimeout={700}
 			>
@@ -158,6 +165,7 @@ class Main extends React.Component {
 						gameCode={this.state.gameCode}
 						players={this.state.players}
 						startGame={this.startGame.bind(this)}
+						setDifficulty={this.setDifficulty.bind(this)}
 					/>
 				}
 				{this.state.uiState === "game" && this.state.currentPage.type === "draw" &&

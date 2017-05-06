@@ -7,9 +7,11 @@ var Game = function (numRounds) {
 	self.players = []
 	self.gameInProgress = false
 	self.remainingRounds = numRounds
+	self.words = []
 
-	self.startGame = () => {
+	self.startGame = difficulty => {
 		self.gameInProgress = true
+		self.words = words[difficulty] || words.easy
 		self.createBooks()
 
 		self.players.forEach( player => {
@@ -27,6 +29,10 @@ var Game = function (numRounds) {
 		return self.players.every( player => {
 			return player.ready
 		})
+	}
+
+	self.getWord = () => {
+		return self.words[Math.floor(Math.random() * self.words.length)]
 	}
 
 	self.setReadyState = readyState => {
@@ -58,7 +64,7 @@ var Game = function (numRounds) {
 				owner: player.playerId,
 				pages: [
 					{
-						question: 	words.easy[Math.floor(Math.random() * words.easy.length)],
+						question: 	self.getWord(),
 						type: 		"draw",
 						playerName: player.playerName,
 						playerId: 	player.playerId

@@ -8,7 +8,7 @@ const Countdown = ({ currentTime, totalTime }) => {
 		</svg>`;
 
 	return (
-		<div className={`countdown ${ currentTime < 10 ? currentTime < 5 ? "pulsate-crazy" : "pulsate-faster" : "" }`}>
+		<div className={`countdown ${ currentTime < 11 ? currentTime < 6 ? "pulsate-crazy" : "pulsate-faster" : "" }`}>
 			<div className="countdown-content">
 				<p className="countdown-time">
 					{Math.max(0, parseInt(currentTime))}

@@ -1,10 +1,12 @@
 @import "styles/fonts";
 @import "styles/vars";
 @import "styles/mixins";
+@import "styles/typography";
 
 @import "styles/countdown";
 @import "styles/button";
 @import "styles/input";
+@import "styles/select";
 @import "styles/form";
 @import "styles/lobby";
 @import "styles/draw";
@@ -40,9 +42,14 @@ body, input, button {
 .logo {
 	@include slide-in;
 	@include slide-out;
+	@include appear-fade-in;
 	position: absolute;
 	height: 200px;
 	width: 100%;
+
+	&.view-appear-active {
+		transform-origin: 50% 150%;
+	}
 }
 
 .logo-content {

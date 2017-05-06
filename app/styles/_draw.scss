@@ -13,6 +13,7 @@
 	max-height: 600px;
 	bottom: 20px;
 	overflow: hidden;
+	box-shadow: 0 20px 40px rgba($red, 0.5);
 
 	canvas {
 		position: absolute;
@@ -41,9 +42,6 @@
 }
 
 .draw-label {
-	font-weight: bold;
-	text-transform: uppercase;
-	font-size: 20px;
-	letter-spacing: 0.5px;
+	@include uppercase-label;
 	color: $red;
 }
