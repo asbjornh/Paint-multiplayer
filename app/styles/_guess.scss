@@ -1,0 +1,43 @@
+.guess {
+	@include full-screen;
+	@include slide-in;
+	@include slide-out;
+}
+
+.guess-content {
+	@include content-container;
+	background-color: white;
+	border-radius: 30px;
+	max-width: none;
+	height: auto;
+	max-height: 600px;
+	bottom: 20px;
+	overflow: hidden;
+	box-shadow: 0 20px 40px rgba($red, 0.5);
+
+	canvas {
+		position: absolute;
+		left: 50%;
+		top: 100px;
+		width: auto;
+		height: calc(100% - 100px);
+		transform: translateX(-50%);
+	}
+}
+
+.guess-header {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
+	padding: 0 20px;
+	box-shadow: 0 0 20px 15px white;
+
+	p {
+		margin: 0;
+		text-align: center;
+	}
+}

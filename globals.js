@@ -1,5 +1,5 @@
-class Globals {
-	static turnDuration = 60;
+const globals= {
+	turnDuration: 20
 }
 
-export default Globals;
+module.exports = globals;

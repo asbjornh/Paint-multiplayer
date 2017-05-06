@@ -1,5 +1,6 @@
 const utils = require("./utils")
 const Game = require("./game")
+const globals = require("../globals");
 
 const Coordinator = function (io) {
 	var games = {};
@@ -51,9 +52,9 @@ const Coordinator = function (io) {
 			// socket.emit("turnstart", page)
 		})
 
-		// setTimeout(function () {
-		// 	getSockets(game.gameCode).emit("turn-end")
-		// }, 10000)
+		setTimeout(function () {
+			getSockets(game.gameCode).emit("turn-end")
+		}, globals.turnDuration * 1000)
 	}
 
 	const rate = game => {

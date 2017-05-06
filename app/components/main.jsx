@@ -97,7 +97,8 @@ class Main extends React.Component {
 			api.submitPage({
 				gameCode: this.state.gameCode,
 				playerId: this.state.playerId,
-				answer: this.state.currentPage.answer
+				answer: this.state.currentPage.answer,
+				dimensions: this.state.currentPage.dimensions
 			})
 			window.clearInterval(this.timer);
 		});
@@ -178,8 +179,9 @@ class Main extends React.Component {
 				{this.state.uiState === "game" && this.state.currentPage.type === "guess" &&
 					<Guess
 						key={"guess"}
-						question={this.state.currentPage.question}
 						updateAnswer={this.updateAnswer.bind(this)}
+						paths={this.state.currentPage.question.paths}
+						{...this.state.currentPage.question.dimensions}
 					/>
 				}
 				{this.state.uiState === "rate" &&

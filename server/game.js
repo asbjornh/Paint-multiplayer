@@ -21,7 +21,9 @@ var Game = function (numRounds) {
 
 	self.getPlayer = playerId => {
 		for (var i=0; i<self.players.length; i++) {
-			if (self.players[i].playerId === playerId) return self.players[i]
+			if (self.players[i].playerId === playerId) {
+				return self.players[i]
+			}
 		}
 	}
 

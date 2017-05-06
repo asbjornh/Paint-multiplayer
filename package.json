@@ -2,7 +2,7 @@
   "name": "Paint-multiplayer",
   "version": "0.0.1",
   "scripts": {
-    "build": "webpack --env.production",
+    "build": "rm -rf build && webpack --env.production",
     "dev": "webpack-dev-server --content-base dist/ --inline"
   },
   "dependencies": {

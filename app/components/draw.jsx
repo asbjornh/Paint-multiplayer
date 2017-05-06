@@ -10,13 +10,9 @@ class Draw extends React.Component {
 		updateAnswer: PropTypes.func
 	}
 
-	state = {
-		timeRemaining: 30
-	}
-
 	currentLine = []
 	paths = []
-	timer
+	dimensions = {}
 
 	drawHandler(coords) {
 		this.currentLine.push({
@@ -24,9 +20,9 @@ class Draw extends React.Component {
 			y: coords.clientY - this.canvas.getBoundingClientRect().top
 		});
 
-		this.currentLine = DrawUtils.smoothPoints(this.currentLine);
+		this.currentLine = DrawUtils.smoothPoints(this.currentLine, window.devicePixelRatio);
 
-		DrawUtils.drawLine(this.ctx, this.currentLine);
+		DrawUtils.drawLine(this.ctx, this.currentLine, window.devicePixelRatio);
 	}
 
 	onTouchStart = e => {
@@ -39,23 +35,24 @@ class Draw extends React.Component {
 
 	onTouchEnd = () => {
 		this.paths.push(this.currentLine);
-		this.props.updateAnswer(this.paths);
+		this.props.updateAnswer({ paths: this.paths, dimensions: this.dimensions });
 		this.currentLine = [];
 	}
 
 	componentDidMount() {
 		this.ctx = this.canvas.getContext("2d");
-		this.canvas.width = this.canvas.offsetWidth * window.devicePixelRatio;
-		this.canvas.height = this.canvas.offsetHeight * window.devicePixelRatio;
+		const width = this.canvas.offsetWidth * window.devicePixelRatio;
+		const height = this.canvas.offsetHeight * window.devicePixelRatio;
+		this.canvas.width = width;
+		this.canvas.height = height;
 
-		this.timer = setInterval(() => {
-			this.setState({ timeRemaining: this.state.timeRemaining - 1 });
-		}, 1000);
-	}
+		this.dimensions = {
+			width: width,
+			height: height,
+			pixelRatio: window.devicePixelRatio
+		};
 
-	componentWillUnmount() {
-		window.clearInterVal(this.timer);
-		this.timer = null;
+		this.props.updateAnswer({ dimensions: this.dimensions });
 	}
 
 	render() {

@@ -49,6 +49,7 @@ class api {
 	}
 
 	static submitPage(data, errorCallback) {
+		console.log("submit page", data);
 		post("submit-page", data, null, errorCallback);
 	}
 
