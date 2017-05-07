@@ -2,15 +2,10 @@ const path = require("path");
 const webpack = require("webpack");
 const autoprefixer = require("autoprefixer");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const CreateMetaFilePlugin = require("./metafile-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = (env = {}) => {
 	const isProduction = env.production === true;
-	const metaFile = {
-		css: isProduction ? "app.[hash].css" : "app.css",
-		client: isProduction ? "app.[hash].js" : "app.js"
-	};
 
 	return {
 		entry: {
@@ -64,7 +59,6 @@ module.exports = (env = {}) => {
 		plugins: (() => {
 			const plugins = [
 				new ExtractTextPlugin(isProduction ? "app.[hash].css" : "app.css"),
-				new CreateMetaFilePlugin(metaFile),
 				new HtmlWebpackPlugin({
 					template: "index.html"
 				})
