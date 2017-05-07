@@ -21,16 +21,6 @@
 		margin-top: 40px;
 	}
 
-	ul {
-		@include remove-list-styles;
-		display: inline-flex;
-		flex-direction: column;
-		min-width: 50%;
-		overflow: auto;
-		color: black;
-		text-align: left;
-	}
-
 	.difficulty-label {
 		margin-top: auto;
 	}
@@ -43,6 +33,18 @@
 
 	> * {
 		width: 100%;
+	}
+}
+
+.lobby-player-list {
+	overflow: auto;
+
+	ul {
+		@include remove-list-styles;
+		display: inline-block;
+		min-width: 40%;
+		color: black;
+		text-align: left;
 	}
 }
 

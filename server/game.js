@@ -19,6 +19,10 @@ var Game = function (numRounds) {
 		})
 	}
 
+	self.reset = () => {
+		self.gameInProgress = false
+	}
+
 	self.getPlayer = playerId => {
 		for (var i=0; i<self.players.length; i++) {
 			if (self.players[i].playerId === playerId) {
@@ -50,7 +54,7 @@ var Game = function (numRounds) {
 			return self.players[0].playerId !== self.players[0].book.owner
 		} else {
 			// If the next player has the first players book, the round is over
-			return self.players[0].playerId !== self.players[1].book.owner
+			return self.players[0].playerId !== self.players.slice(-1)[0].book.owner
 		}
 	}
 

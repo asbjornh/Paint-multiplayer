@@ -9,7 +9,7 @@ module.exports = (env = {}) => {
 
 	return {
 		entry: {
-			app: "./app/app.js"
+			app: isProduction ? "./app/app.prod.js" : "./app/app.dev.js"
 		},
 		output: {
 			path: path.resolve(__dirname + "/build"),
@@ -71,10 +71,7 @@ module.exports = (env = {}) => {
 							NODE_ENV: JSON.stringify("production")
 						}
 					}),
-					new webpack.optimize.UglifyJsPlugin({
-						compress: { warnings: false },
-						output: { comments: false }
-					})
+					new webpack.optimize.UglifyJsPlugin()
 				]);
 			}
 

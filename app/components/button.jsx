@@ -4,7 +4,9 @@ import PropTypes from "prop-types";
 class Button extends React.Component {
 	static propTypes = {
 		onClick: PropTypes.func,
-		text: PropTypes.string
+		text: PropTypes.string,
+		className: PropTypes.string,
+		disabled: PropTypes.bool
 	}
 
 	state = {
@@ -23,10 +25,11 @@ class Button extends React.Component {
 		return (
 			<button
 				type="button"
-				className={`${this.state.hasTouch ? "hover": ""}`}
+				className={this.props.className + ` ${this.state.hasTouch ? "hover": ""}`}
 				onClick={this.props.onClick}
 				onTouchStart={this.touchStart.bind(this)}
 				onTouchEnd={this.touchEnd.bind(this)}
+				disabled={this.props.disabled}
 			>
 				<span>{this.props.text}</span>
 			</button>

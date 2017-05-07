@@ -37,22 +37,27 @@ app.get("/api/create-game", (req, res) => {
 
 app.post("/api/start-game", (req, res) => {
 	coordinator.startGame(req.body.gameCode, req.body.difficulty)
-	res.end()
+	res.json({})
+})
+
+app.post("/api/start-new-game", (req, res) => {
+	coordinator.startNewGame(req.body.gameCode)
+	res.json({})
 })
 
 app.post("/api/start-round", (req, res) => {
 	coordinator.startRound(req.body.gameCode)
-	res.end()
+	res.json({})
 })
 
 app.post("/api/submit-page", (req, res) => {
 	req.body && coordinator.submitPage(req.body)
-	res.end()
+	res.json({})
 })
 
 app.post("/api/submit-rating", (req, res) => {
 	req.body && coordinator.submitRating(req.body)
-	res.end()
+	res.json({})
 })
 
 app.get(/^(.+)$/, (req, res) => {

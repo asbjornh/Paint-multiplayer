@@ -72,9 +72,13 @@ const Coordinator = function (io) {
 
 		if (!game.gameInProgress) {
 			game.startGame(difficulty)
-			getSockets(gameCode).emit("debug", "game started")
 			turn(game)
 		}
+	}
+
+	this.startNewGame = function (gameCode) {
+		var game = games[gameCode]
+		game.reset()
 	}
 
 	this.startRound = function (gameCode) {
@@ -104,9 +108,8 @@ const Coordinator = function (io) {
 				turn(game)
 			} else {
 				// Round over
-				getSockets(data.gameCode).emit("debug", "round over")
-				getSockets(data.gameCode).emit("debug", game.players.map(p => p.book.pages))
-				game.returnBooksToOwner
+				// getSockets(data.gameCode).emit("debug", game.players.map(p => p.book.pages))
+				game.returnBooksToOwner()
 				game.remainingRounds--
 
 				rate(game)
@@ -123,6 +126,7 @@ const Coordinator = function (io) {
 
 		player.ready = true
 
+		getSockets(data.gameCode).emit("get-remaining-rounds", game.remainingRounds);
 		getSockets(data.gameCode).emit("get-player-list", game.players.map( p => {
 			return {
 				playerName: p.playerName,
@@ -131,18 +135,6 @@ const Coordinator = function (io) {
 				ready: p.ready
 			}
 		}))
-
-		if (game.getReadyState()) {
-			// Check if game is over
-			if (game.remainingRounds === 0) {
-				// Game over
-				getSockets(data.gameCode).emit("game-over")
-				getSockets(data.gameCode).emit("debug", game.players)
-			} else {
-				// Ready for new round
-				getSockets(data.gameCode).emit("get-round-ready-state", true);
-			}
-		}
 	}
 }
 

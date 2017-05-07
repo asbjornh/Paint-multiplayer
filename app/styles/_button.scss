@@ -13,6 +13,13 @@ button {
 	will-change: transform;
 	transition: transform .3s $ease-out;
 
+	&.is-dark {
+		color: white;
+
+		&:before { box-shadow: 0 10px 25px $red; }	
+		&:after { background-image: url(../assets/img/button-red.svg); }
+	}
+
 	&:before,
 	&:after {
 		content: "";
@@ -34,14 +41,18 @@ button {
 	// Shadow
 	&:before {
 		z-index: -1;
-		border-radius: 30px;
+		border-radius: 100%;
 		opacity: 0.5;
 		background-color: $red;
 		box-shadow: 0 20px 40px $red;
 		transition: transform .3s $ease-out;
 	}
 
-	&.hover {
+	&:disabled {
+		opacity: 0.4;
+	}
+
+	&:not([disabled]).hover {
 		transform: scale(1.1);
 		transition-timing-function: $ease-out-back-hard;
 

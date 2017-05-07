@@ -1,60 +1,87 @@
-import $ from "jquery"; // TODO: check possibility for custom build
+	// $.ajax({
+	// 	url: baseUrl + endpoint,
+	// 	method: "POST",
+	// 	headers: {
+	// 		"Content-Type": "application/json"
+	// 	},
+	// 	data: JSON.stringify(data),
+	// 	success: callback,
+	// 	error: function (jqxhr, textStatus, errorThrown) {
+	// 		errorCallback && errorCallback(jqxhr, textStatus, errorThrown)
+	// 	}
+	// })
 
-const urlPrefix = "http://localhost:3000/api/"; // TODO: fix for prod
+	// $.ajax({
+	// 	url: baseUrl + endpoint,
+	// 	method: "GET",
+	// 	headers: {
+	// 		"Content-Type": "application/json"
+	// 	},
+	// 	success: callback,
+	// 	error: function (jqxhr, textStatus, errorThrown) {
+	// 		errorCallback && errorCallback(jqxhr, textStatus, errorThrown)
+	// 	}
+	// })
 
-function post(endpoint, data, callback, errorCallback) {
-	$.ajax({
-		url: urlPrefix + endpoint,
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		data: JSON.stringify(data),
-		success: callback,
-		error: function (jqxhr, textStatus, errorThrown) {
-			errorCallback && errorCallback(jqxhr, textStatus, errorThrown)
-		}
-	})
-}
-
-function get(endpoint, callback, errorCallback) {
-	$.ajax({
-		url: urlPrefix + endpoint,
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		success: callback,
-		error: function (jqxhr, textStatus, errorThrown) {
-			errorCallback && errorCallback(jqxhr, textStatus, errorThrown)
-		}
-	})
-}
 
 class api {
-	static joinGame(data, callback, errorCallback) {
-		post("join-game", data, callback, errorCallback);
+	constructor(env) {
+		this.baseUrl = env === "dev" ? "http://localhost:3000/api/" : "/api/"
 	}
 
-	static createGame(callback, errorCallback) {
-		get("create-game" , callback, errorCallback);
+	post(endpoint, data, callback ) {
+		fetch(this.baseUrl + endpoint, {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: {
+				"Content-Type": "application/json"
+			}
+		}).then(res => {
+			if (res.ok) { return res.json() }
+
+			throw new Error("Det ble noe føkk med POST");
+		}).then(callback);
 	}
 
-	static startGame(data, errorCallback) {
-		post("start-game", data, null, errorCallback);
+	get(endpoint, callback ) {
+		fetch(this.baseUrl + endpoint, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		}).then( res => {
+			if (res.ok) { return res.json() }
+
+			throw new Error("Det ble noe føkk med GET");
+		}).then(callback);
 	}
 
-	static startRound(data, errorCallback) {
-		post("start-round", data, null, errorCallback);
+	joinGame(data, callback, errorCallback) {
+		this.post("join-game", data, callback, errorCallback);
 	}
 
-	static submitPage(data, errorCallback) {
-		console.log("submit page", data);
-		post("submit-page", data, null, errorCallback);
+	createGame(callback, errorCallback) {
+		this.get("create-game", callback, errorCallback);
 	}
 
-	static submitRating(data, errorCallback) {
-		post("submit-rating", data, null, errorCallback);
+	startGame(data, errorCallback) {
+		this.post("start-game", data, null, errorCallback);
+	}
+
+	startNewGame(data, errorCallback) {
+		this.post("start-new-game", data, null, errorCallback);
+	}
+
+	startRound(data, errorCallback) {
+		this.post("start-round", data, null, errorCallback);
+	}
+
+	submitPage(data, errorCallback) {
+		this.post("submit-page", data, null, errorCallback);
+	}
+
+	submitRating(data, errorCallback) {
+		this.post("submit-rating", data, null, errorCallback);
 	}
 }
 

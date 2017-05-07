@@ -1,8 +1,10 @@
 import React from "react";
+import PropTypes from "prop-types";
+
 import io from "socket.io-client";
 import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 
-import api from "../api-helper";
+import ApiHelper from "../api-helper";
 import Globals from "../../globals";
 
 import Countdown from "./countdown";
@@ -11,10 +13,13 @@ import Lobby from "./lobby";
 import Draw from "./draw";
 import Guess from "./guess";
 import Rate from "./rate";
-
-const socket = io("//localhost:3000"); // TODO: fix for production
+import Summary from "./summary";
 
 class Main extends React.Component {
+	static propTypes = {
+		env: PropTypes.string
+	}
+
 	timer
 
 	state = {
@@ -25,7 +30,8 @@ class Main extends React.Component {
 		playerId: "",
 		turnTimeRemaining: 0,
 		difficulty: "easy",
-		pagesToRate: []
+		pagesToRate: [],
+		isGameOver: false
 	};
 
 	setPlayerName(playerName) {
@@ -41,7 +47,7 @@ class Main extends React.Component {
 	}
 
 	joinGame() {
-		api.joinGame({
+		this.api.joinGame({
 			gameCode: this.state.gameCode,
 			playerName: this.state.playerName,
 			playerId: this.state.playerId
@@ -53,18 +59,23 @@ class Main extends React.Component {
 	}
 
 	createGame() {
-		api.createGame(res => {
+		this.api.createGame(res => {
 			this.setState({ gameCode: res.gameCode });
 			this.joinGame();
 		});
 	}
 
 	startGame() {
-		api.startGame({ gameCode: this.state.gameCode, difficulty: this.state.difficulty });
+		this.api.startGame({ gameCode: this.state.gameCode, difficulty: this.state.difficulty });
+	}
+
+	startNewGame() {
+		this.api.startNewGame({ gameCode: this.state.gameCode });
+		this.setState({ uiState: "lobby", isGameOver: false });
 	}
 
 	startRound() {
-		api.startRound({ gameCode: this.state.gameCode });
+		this.api.startRound({ gameCode: this.state.gameCode });
 	}
 
 	updateAnswer(answer) {
@@ -74,17 +85,20 @@ class Main extends React.Component {
 	}
 
 	submitRating(pages) {
-		api.submitRating({
+		this.setState({ pagesToRate: pages, uiState: "summary" });
+		this.api.submitRating({
 			gameCode: this.state.gameCode,
 			playerId: this.state.playerId,
-			ratedPages: pages.map( page => {
-				page.accepted = true;
-				return page;
-			})
+			ratedPages: this.state.pagesToRate
 		})
 	}
 
 	componentDidMount() {
+		this.api = new ApiHelper(this.props.env);
+		console.log(this.api);
+
+		const socket = io(this.props.env === "dev" ? "//localhost:3000" : undefined);
+
 		socket.on("get-socket-id", playerId => {
 			this.setState({ playerId: playerId });
 		});
@@ -93,9 +107,9 @@ class Main extends React.Component {
 			this.setState({ players: players });
 		});
 
-		socket.on("get-round-ready-state", isReady => {
-			this.setState({ readyForRound: isReady });
-		})
+		socket.on("get-remaining-rounds", remainingRounds => {
+			this.setState({ isGameOver: remainingRounds === 0 });
+		});
 
 		socket.on("turn-start", page => {
 			console.log("turn start", page);
@@ -107,7 +121,7 @@ class Main extends React.Component {
 
 		socket.on("turn-end", () => {
 			console.log("turn end");
-			api.submitPage({
+			this.api.submitPage({
 				gameCode: this.state.gameCode,
 				playerId: this.state.playerId,
 				answer: this.state.currentPage.answer,
@@ -117,13 +131,8 @@ class Main extends React.Component {
 		});
 
 		socket.on("rate", pages => {
-			// TODO: create view and stuff
 			this.setState({ uiState: "rate", pagesToRate: pages });
 		});
-
-		socket.on("game-over", () => {
-			this.setState({ uiState: "summary", gameOver: true });
-		})
 
 		socket.on("debug", msg => {
 			console.log(msg);
@@ -197,7 +206,12 @@ class Main extends React.Component {
 					/>
 				}
 				{this.state.uiState === "summary" &&
-					<div key={"summary"}>Spill ferdig</div>
+					<Summary
+						players={this.state.players}
+						isGameOver={this.state.isGameOver}
+						startRound={this.startRound.bind(this)}
+						startNewGame={this.startNewGame.bind(this)}
+					/>
 				}
 			</CSSTransitionGroup>
 		);
