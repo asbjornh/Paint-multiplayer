@@ -30,6 +30,7 @@ class Draw extends React.Component {
 	}
 
 	onTouchMove = e => {
+		console.log(e.touches[0]);
 		this.drawHandler(e.touches[0]);
 	}
 

@@ -95,9 +95,12 @@ class Main extends React.Component {
 
 	componentDidMount() {
 		this.api = new ApiHelper(this.props.env);
-		console.log(this.api);
 
 		const socket = io(this.props.env === "dev" ? "//localhost:3000" : undefined);
+
+		window.addEventListener("touchmove", e => {
+			e.preventDefault();
+		});
 
 		socket.on("get-socket-id", playerId => {
 			this.setState({ playerId: playerId });
