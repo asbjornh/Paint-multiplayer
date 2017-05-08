@@ -98,10 +98,6 @@ class Main extends React.Component {
 
 		const socket = io(this.props.env === "dev" ? "//localhost:3000" : undefined);
 
-		window.addEventListener("touchmove", e => {
-			e.preventDefault();
-		});
-
 		socket.on("get-socket-id", playerId => {
 			this.setState({ playerId: playerId });
 		});
