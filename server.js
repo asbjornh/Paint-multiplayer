@@ -59,7 +59,7 @@ app.post("/api/submit-rating", (req, res) => {
 })
 
 app.get(/^(.+)$/, (req, res) => {
-	res.sendFile( __dirname + "build/" + req.params[0])
+	res.sendFile( __dirname + "/build/" + req.params[0])
 })
 
 http.listen(port, () => {
