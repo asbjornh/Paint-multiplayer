@@ -5,7 +5,9 @@ import { render } from "react-dom";
 
 import Main from "./components/main";
 
-render(
-	<Main env="dev" />,
-	document.getElementById("app")
-);
+window.onload = function () {
+	render(
+		<Main env="dev" />,
+		document.getElementById("app")
+	);
+}

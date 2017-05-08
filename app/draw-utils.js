@@ -1,4 +1,3 @@
-
 var smoothLength = 3;
 
 class DrawUtils {
@@ -16,11 +15,27 @@ class DrawUtils {
 		return points;
 	}
 
-	static drawLine(ctx, points, pixelRatio) {
-		var p0 = points[0];
-		ctx.fillStyle = "black";
-		ctx.strokeWidth = 2 * pixelRatio;
-		ctx.filter = `blur(${pixelRatio}px)`;
+
+	static clearCanvas(canvas) {
+		canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+	}
+
+
+	static transferImage(canvasIn, canvasOut) {
+		var ctx = canvasOut.getContext("2d");
+		ctx.globalCompositeOperation = "multiply";
+		ctx.drawImage(canvasIn, 0, 0);
+	}
+
+
+	static drawLine(canvas, points, pixelRatio) {
+		var p0 = points[0],
+			ctx = canvas.getContext("2d");
+
+		ctx.strokeStyle = "black";
+		ctx.lineWidth = 3 * pixelRatio;
+		ctx.lineCap = "round";
+
 		ctx.beginPath();
 		ctx.moveTo(p0.x, p0.y);
 
@@ -30,12 +45,9 @@ class DrawUtils {
 		ctx.stroke();
 	}
 
-	static drawPaths(ctx, paths, pixelRatio) {
+	static drawPaths(canvas, paths, pixelRatio) {
 		paths.forEach(function (path) {
-			path.forEach(function (point, i) {
-				var partialPath = path.slice(0, Math.max(1, i));
-				DrawUtils.drawLine(ctx, partialPath, pixelRatio);
-			})
+			DrawUtils.drawLine(canvas, path, pixelRatio);
 		});
 	}
 }

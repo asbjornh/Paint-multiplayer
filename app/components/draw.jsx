@@ -23,8 +23,8 @@ class Draw extends React.Component {
 		});
 
 		this.currentLine = DrawUtils.smoothPoints(this.currentLine);
-
-		DrawUtils.drawLine(this.ctx, this.currentLine, pixelRatio);
+		DrawUtils.clearCanvas(this.canvas);
+		DrawUtils.drawLine(this.canvas, this.currentLine, pixelRatio);
 	}
 
 	onTouchStart = e => {
@@ -39,14 +39,17 @@ class Draw extends React.Component {
 		this.paths.push(this.currentLine);
 		this.props.updateAnswer({ paths: this.paths, dimensions: this.dimensions });
 		this.currentLine = [];
+		DrawUtils.transferImage(this.canvas, this.storeCanvas);
+		DrawUtils.clearCanvas(this.canvas);
 	}
 
 	componentDidMount() {
-		this.ctx = this.canvas.getContext("2d");
 		const width = this.canvas.offsetWidth * window.devicePixelRatio;
 		const height = this.canvas.offsetHeight * window.devicePixelRatio;
 		this.canvas.width = width;
 		this.canvas.height = height;
+		this.storeCanvas.width = width;
+		this.storeCanvas.height = height;
 
 		this.dimensions = {
 			width: width,
@@ -65,6 +68,9 @@ class Draw extends React.Component {
 						<p className="draw-label">Du skal tegne:</p>
 						<p className="draw-question">{this.props.question}</p>
 					</div>
+					<canvas
+						ref={c => { this.storeCanvas = c; }}
+					/>
 					<canvas
 						ref={c => { this.canvas = c; }}
 						onTouchStart={this.onTouchStart}

@@ -12,11 +12,10 @@ class Drawing extends React.Component {
 	}
 
 	componentDidMount() {
-		this.ctx = this.canvas.getContext("2d");
 		this.canvas.width = this.props.width;
 		this.canvas.height = this.props.height;
 		if (this.props.paths && this.props.paths.length) {
-			DrawUtils.drawPaths(this.ctx, this.props.paths, this.props.pixelRatio);
+			DrawUtils.drawPaths(this.canvas, this.props.paths, this.props.pixelRatio);
 		}
 	}
 
