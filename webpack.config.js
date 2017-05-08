@@ -67,7 +67,7 @@ module.exports = (env = {}) => {
 			if (isProduction) {
 				return plugins.concat([
 					new webpack.DefinePlugin({
-						"process-env": {
+						"process.env": {
 							NODE_ENV: JSON.stringify("production")
 						}
 					}),
