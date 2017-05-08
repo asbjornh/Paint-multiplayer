@@ -43,7 +43,12 @@ class Draw extends React.Component {
 		DrawUtils.clearCanvas(this.canvas);
 	}
 
+	preventScrolling = e => {
+		e.preventDefault();
+	}
+
 	componentDidMount() {
+		window.addEventListener("touchmove", this.preventScrolling);
 		const width = this.canvas.offsetWidth * window.devicePixelRatio;
 		const height = this.canvas.offsetHeight * window.devicePixelRatio;
 		this.canvas.width = width;
@@ -58,6 +63,10 @@ class Draw extends React.Component {
 		};
 
 		this.props.updateAnswer({ dimensions: this.dimensions });
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener("touchmove", this.preventScrolling);
 	}
 
 	render() {

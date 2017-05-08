@@ -79,7 +79,7 @@
 	background-image: url(../assets/img/thumbs-up.svg);
 	transform: scale(0) rotate(-15deg);
 	opacity: 0;
-	transition: transform .4s $ease-out, .2s $ease-out;
+	transition: transform .6s $ease-out, .3s $ease-out;
 
 	&.is-visible {
 		opacity: 1;
