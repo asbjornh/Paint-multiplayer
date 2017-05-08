@@ -1,5 +1,5 @@
 const globals= {
-	turnDuration: 20
+	turnDuration: 60
 }
 
 module.exports = globals;

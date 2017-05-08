@@ -6,8 +6,9 @@
 
 .rate-content {
 	@include card-content;
+	position: relative;
 	bottom: auto;
-	margin-bottom: 10%;
+	margin-bottom: 30px;
 	max-height: none;
 	padding: 20px;
 	overflow: visible;
