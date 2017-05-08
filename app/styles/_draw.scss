@@ -16,6 +16,7 @@
 
 .draw-header {
 	@include card-header;
+	box-shadow: 0 0 30px 15px white;
 	
 	p {
 		margin: 0;

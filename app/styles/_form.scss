@@ -11,7 +11,7 @@
 
 	.text-input, button {
 		width: 100%;
-		margin: 20px 0;
+		margin: 10px 0;
 	}
 }
 
@@ -25,12 +25,20 @@
 	@include full-screen;
 	@include slide-in;
 	@include slide-out;
+
+	&.step-2 {
+		.text-input, button {
+			&:first-child { margin-top: 0; }
+			&:last-child { margin-bottom: auto; }
+		}
+	}
 }
 
 .form-group-inner {
 	@include content-container;
 	top: 200px;
 	max-height: 400px;
+	height: calc(100% - 220px);
 	transform: translateX(-50%);
 	display: flex;
 	flex-direction: column;

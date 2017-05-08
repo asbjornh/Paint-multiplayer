@@ -2,6 +2,8 @@
 	@include full-screen;
 	@include slide-in;
 	@include slide-out;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
 
 	p {
 		@include uppercase-label;
@@ -13,7 +15,7 @@
 		font-size: 80px;
 		font-weight: 300;
 		line-height: 0.8;
-		margin-bottom: 40px;
+		margin-bottom: 30px;
 	}
 
 	h2 {
@@ -30,6 +32,8 @@
 	@include content-container;
 	display: flex;
 	flex-direction: column;
+	height: auto;
+	margin-bottom: 30px;
 
 	> * {
 		width: 100%;
@@ -50,7 +54,7 @@
 
 .lobby-information {
 	flex-grow: 1;
-	padding: 20px 30px;
+	padding: 20px 30px 30px;
 	background-color: white;
 	border-radius: 30px;
 	box-shadow: 0 20px 40px rgba($red, 0.5);

@@ -18,6 +18,9 @@
 
 *, *:before, *:after {
 	box-sizing: border-box;
+	-webkit-tap-highlight-color: rgba(black, 0.01);
+	-webkit-touch-callout: none;
+	user-select: none;
 }
 
 html, body, #app, #app > div {

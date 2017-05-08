@@ -25,7 +25,7 @@ class Button extends React.Component {
 		return (
 			<button
 				type="button"
-				className={this.props.className + ` ${this.state.hasTouch ? "hover": ""}`}
+				className={(this.props.className || "") + ` ${this.state.hasTouch ? "hover": ""}`}
 				onClick={this.props.onClick}
 				onTouchStart={this.touchStart.bind(this)}
 				onTouchEnd={this.touchEnd.bind(this)}

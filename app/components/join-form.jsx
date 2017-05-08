@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
 
+import IsolatedScroll from "react-isolated-scroll";
 import Button from "./button";
 import TextInput from "./text-input";
 
@@ -49,38 +50,40 @@ class JoinForm extends React.Component {
 
 	render() {
 		return (
-			<CSSTransitionGroup
-				className="form"
-				transitionName="view"
-				transitionEnterTimeout={900}
-				transitionLeaveTimeout={700}
-			>
-				{this.state.step === 0 &&
-					<div className="form-group">
-						<div className="form-group-inner">
-							<TextInput label="Navn" onChange={this.handleName.bind(this)} shake={this.state.shakeNameInput} />
-							<Button onClick={this.submitName.bind(this)} text="Ok!" />
+			<IsolatedScroll>
+				<CSSTransitionGroup
+					className="form"
+					transitionName="view"
+					transitionEnterTimeout={900}
+					transitionLeaveTimeout={700}
+				>
+					{this.state.step === 0 &&
+						<div className="form-group step-1">
+							<div className="form-group-inner">
+								<TextInput label="Navn" onChange={this.handleName.bind(this)} shake={this.state.shakeNameInput} />
+								<Button onClick={this.submitName.bind(this)} text="Ok!" />
+							</div>
 						</div>
-					</div>
-				}
+					}
 
-				{this.state.step === 1 &&
-					<div className="form-group">
-						<div className="form-group-inner">
-							<TextInput
-								className="uppercase"
-								maxLength={4}
-								label="Spillkode"
-								onChange={this.handleGameCode.bind(this)}
-								shake={this.state.shakeGameCodeInput}
-							/>
-							<Button onClick={this.joinButton.bind(this)} text="Bli med i spill" />
-							<div className="form-separator">eller</div>
-							<Button onClick={this.props.createGame} text="Opprett spill" />
+					{this.state.step === 1 &&
+						<div className="form-group step-2">
+							<div className="form-group-inner">
+								<TextInput
+									className="uppercase"
+									maxLength={4}
+									label="Spillkode"
+									onChange={this.handleGameCode.bind(this)}
+									shake={this.state.shakeGameCodeInput}
+								/>
+								<Button onClick={this.joinButton.bind(this)} text="Bli med i spill" />
+								<div className="form-separator">eller</div>
+								<Button onClick={this.props.createGame} text="Opprett spill" />
+							</div>
 						</div>
-					</div>
-				}
-			</CSSTransitionGroup>
+					}
+				</CSSTransitionGroup>
+			</IsolatedScroll>
 		);
 	}
 }

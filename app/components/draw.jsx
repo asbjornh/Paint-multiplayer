@@ -15,14 +15,16 @@ class Draw extends React.Component {
 	dimensions = {}
 
 	drawHandler(coords) {
+		const pixelRatio = window.devicePixelRatio;
+
 		this.currentLine.push({
-			x: coords.clientX - this.canvas.getBoundingClientRect().left,
-			y: coords.clientY - this.canvas.getBoundingClientRect().top
+			x: (coords.clientX - this.canvas.getBoundingClientRect().left) * pixelRatio,
+			y: (coords.clientY - this.canvas.getBoundingClientRect().top) * pixelRatio
 		});
 
-		this.currentLine = DrawUtils.smoothPoints(this.currentLine, window.devicePixelRatio);
+		this.currentLine = DrawUtils.smoothPoints(this.currentLine);
 
-		DrawUtils.drawLine(this.ctx, this.currentLine, window.devicePixelRatio);
+		DrawUtils.drawLine(this.ctx, this.currentLine, pixelRatio);
 	}
 
 	onTouchStart = e => {
@@ -30,7 +32,6 @@ class Draw extends React.Component {
 	}
 
 	onTouchMove = e => {
-		console.log(e.touches[0]);
 		this.drawHandler(e.touches[0]);
 	}
 

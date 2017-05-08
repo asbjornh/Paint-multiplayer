@@ -2,14 +2,14 @@
 var smoothLength = 3;
 
 class DrawUtils {
-	static smoothPoints(points, pixelRatio) {
+	static smoothPoints(points) {
 		if (points.length >= smoothLength) {
 			var a = 0.2;
 			var p = points[points.length - 1];
 			var p1 = points[points.length - 2];
 			points[points.length - 1] = {
-				x: parseFloat( ((p.x * a + p1.x * (1 - a)) * pixelRatio).toFixed(2) ),
-				y: parseFloat( ((p.y * a + p1.y * (1 - a)) * pixelRatio).toFixed(2) )
+				x: parseFloat( (p.x * a + p1.x * (1 - a)).toFixed(2) ),
+				y: parseFloat( (p.y * a + p1.y * (1 - a)).toFixed(2) )
 			};
 		}
 
@@ -20,7 +20,7 @@ class DrawUtils {
 		var p0 = points[0];
 		ctx.fillStyle = "black";
 		ctx.strokeWidth = 2 * pixelRatio;
-		ctx.filter = "blur(1px)";
+		ctx.filter = `blur(${pixelRatio}px)`;
 		ctx.beginPath();
 		ctx.moveTo(p0.x, p0.y);
 
