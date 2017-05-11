@@ -1,0 +1,39 @@
+.game-over {
+	@include card;
+}
+
+.game-over-content {
+	@include card-content;
+	background-color: transparent;
+	box-shadow: none;
+	display: flex;
+	flex-direction: column;
+
+	ul {
+		@include remove-list-styles;
+		margin: auto;
+		color: white;
+		font-size: 36px;
+	}
+
+	li {
+		display: flex;
+
+		&:first-child {
+			margin-bottom: 30px;
+		}
+	}
+
+	.name {
+		flex-grow: 1;
+	}
+
+	.score {
+		margin-left: 20px;
+	}
+
+	button {
+		width: 100%;
+		margin-top: auto;
+	}
+}

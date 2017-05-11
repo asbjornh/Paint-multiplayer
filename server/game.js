@@ -21,6 +21,7 @@ var Game = function (numRounds) {
 
 	self.reset = () => {
 		self.gameInProgress = false
+		self.remainingRounds = numRounds
 	}
 
 	self.getPlayer = playerId => {

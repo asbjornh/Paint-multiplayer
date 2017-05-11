@@ -71,6 +71,7 @@ const Coordinator = function (io) {
 		var game = games[gameCode]
 
 		if (!game.gameInProgress) {
+			getSockets(gameCode).emit("get-remaining-rounds", game.remainingRounds);
 			game.startGame(difficulty)
 			turn(game)
 		}

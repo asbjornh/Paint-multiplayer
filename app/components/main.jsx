@@ -14,6 +14,7 @@ import Draw from "./draw";
 import Guess from "./guess";
 import Rate from "./rate";
 import Summary from "./summary";
+import GameOver from "./game-over";
 
 class Main extends React.Component {
 	static propTypes = {
@@ -30,8 +31,7 @@ class Main extends React.Component {
 		playerId: "",
 		turnTimeRemaining: 0,
 		difficulty: "easy",
-		pagesToRate: [],
-		isGameOver: false
+		pagesToRate: []
 	};
 
 	setPlayerName(playerName) {
@@ -71,7 +71,7 @@ class Main extends React.Component {
 
 	startNewGame() {
 		this.api.startNewGame({ gameCode: this.state.gameCode });
-		this.setState({ uiState: "lobby", isGameOver: false });
+		this.setState({ uiState: "lobby" });
 	}
 
 	startRound() {
@@ -85,7 +85,7 @@ class Main extends React.Component {
 	}
 
 	submitRating(pages) {
-		this.setState({ pagesToRate: pages, uiState: "summary" });
+		this.setState({ pagesToRate: pages, uiState: "round-over" });
 		this.api.submitRating({
 			gameCode: this.state.gameCode,
 			playerId: this.state.playerId,
@@ -107,7 +107,7 @@ class Main extends React.Component {
 		});
 
 		socket.on("get-remaining-rounds", remainingRounds => {
-			this.setState({ isGameOver: remainingRounds === 0 });
+			this.setState({ remainingRounds: remainingRounds });
 		});
 
 		socket.on("turn-start", page => {
@@ -204,11 +204,15 @@ class Main extends React.Component {
 						submitRating={this.submitRating.bind(this)}
 					/>
 				}
-				{this.state.uiState === "summary" &&
+				{this.state.uiState === "round-over" && this.state.remainingRounds &&
 					<Summary
 						players={this.state.players}
-						isGameOver={this.state.isGameOver}
 						startRound={this.startRound.bind(this)}
+					/>
+				}
+				{this.state.uiState === "round-over" && !this.state.remainingRounds && this.state.players.every(p => p.ready) &&
+					<GameOver
+						players={this.state.players}
 						startNewGame={this.startNewGame.bind(this)}
 					/>
 				}
