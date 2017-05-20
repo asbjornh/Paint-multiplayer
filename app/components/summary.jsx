@@ -14,11 +14,11 @@ function getReadyState(players) {
 	return players.every(player => player.ready);
 }
 
-const Summary = ({ isGameOver, players, startRound, startNewGame }) =>
+const Summary = ({ players, startRound }) =>
 	<div className="summary">
 		<div className="summary-content">
 			<div className="summary-header">
-				<p>{getReadyState ? isGameOver ? "Spill ferdig" : "Runde ferdig" : "Venter på spillere"}</p>
+				<p>{getReadyState ? "Venter på spillere" : "Runde ferdig" }</p>
 			</div>
 			<table>
 				<tbody>
@@ -38,23 +38,21 @@ const Summary = ({ isGameOver, players, startRound, startNewGame }) =>
 			</table>
 			<Button
 				className="is-dark"
-				text={isGameOver ? "Spill igjen!" : "Neste runde"}
+				text="Neste runde"
 				disabled={!getReadyState(players)}
-				onClick={isGameOver ? startNewGame : startRound}
+				onClick={startRound}
 			/>
 		</div>
 	</div>;
 
 Summary.propTypes = {
-	isGameOver: PropTypes.bool,
 	players: PropTypes.arrayOf(PropTypes.shape({
 		playerName: PropTypes.string,
 		playerId: PropTypes.string,
 		score: PropTypes.number,
 		ready: PropTypes.bool
 	})),
-	startRound: PropTypes.func,
-	startNewGame: PropTypes.func
+	startRound: PropTypes.func
 };
 
 export default Summary;

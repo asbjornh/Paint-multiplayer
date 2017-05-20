@@ -14,6 +14,7 @@ import Draw from "./draw";
 import Guess from "./guess";
 import Rate from "./rate";
 import Summary from "./summary";
+import GameOver from "./game-over";
 
 class Main extends React.Component {
 	static propTypes = {
@@ -30,8 +31,7 @@ class Main extends React.Component {
 		playerId: "",
 		turnTimeRemaining: 0,
 		difficulty: "easy",
-		pagesToRate: [],
-		isGameOver: false
+		pagesToRate: []
 	};
 
 	setPlayerName(playerName) {
@@ -71,7 +71,7 @@ class Main extends React.Component {
 
 	startNewGame() {
 		this.api.startNewGame({ gameCode: this.state.gameCode });
-		this.setState({ uiState: "lobby", isGameOver: false });
+		this.setState({ uiState: "lobby" });
 	}
 
 	startRound() {
@@ -85,7 +85,7 @@ class Main extends React.Component {
 	}
 
 	submitRating(pages) {
-		this.setState({ pagesToRate: pages, uiState: "summary" });
+		this.setState({ pagesToRate: pages, uiState: "round-over" });
 		this.api.submitRating({
 			gameCode: this.state.gameCode,
 			playerId: this.state.playerId,
@@ -107,19 +107,23 @@ class Main extends React.Component {
 		});
 
 		socket.on("get-remaining-rounds", remainingRounds => {
-			this.setState({ isGameOver: remainingRounds === 0 });
+			this.setState({ remainingRounds: remainingRounds });
 		});
 
 		socket.on("turn-start", page => {
-			console.log("turn start", page);
-			this.setState({ uiState: "game", currentPage: page, turnTimeRemaining: Globals.turnDuration });
+			this.setState({
+				uiState: "game",
+				currentPage: page,
+				turnTimeRemaining: page.type === "draw"
+					? Globals.turnDuration
+					: Globals.guessDuration
+			});
 			this.timer = setInterval(() => {
-				this.setState({ turnTimeRemaining: this.state.turnTimeRemaining - 0.1 });
-			}, 100);
+				this.setState({ turnTimeRemaining: --this.state.turnTimeRemaining });
+			}, 1000);
 		});
 
 		socket.on("turn-end", () => {
-			console.log("turn end");
 			this.api.submitPage({
 				gameCode: this.state.gameCode,
 				playerId: this.state.playerId,
@@ -159,7 +163,9 @@ class Main extends React.Component {
 				{this.state.uiState === "game" &&
 					<Countdown
 						currentTime={this.state.turnTimeRemaining}
-						totalTime={Globals.turnDuration}
+						totalTime={
+							this.state.currentPage.type === "draw" ? Globals.turnDuration : Globals.guessDuration
+						}
 					/>
 				}
 				{this.state.uiState === "join" &&
@@ -204,11 +210,15 @@ class Main extends React.Component {
 						submitRating={this.submitRating.bind(this)}
 					/>
 				}
-				{this.state.uiState === "summary" &&
+				{this.state.uiState === "round-over" && this.state.remainingRounds &&
 					<Summary
 						players={this.state.players}
-						isGameOver={this.state.isGameOver}
 						startRound={this.startRound.bind(this)}
+					/>
+				}
+				{this.state.uiState === "round-over" && !this.state.remainingRounds && this.state.players.every(p => p.ready) &&
+					<GameOver
+						players={this.state.players}
 						startNewGame={this.startNewGame.bind(this)}
 					/>
 				}

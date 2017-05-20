@@ -1,5 +1,6 @@
 @import "styles/fonts";
 @import "styles/vars";
+@import "styles/functions";
 @import "styles/mixins";
 @import "styles/typography";
 
@@ -14,6 +15,7 @@
 @import "styles/guess";
 @import "styles/rate";
 @import "styles/summary";
+@import "styles/game-over";
 
 
 *, *:before, *:after {
