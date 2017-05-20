@@ -111,15 +111,19 @@ class Main extends React.Component {
 		});
 
 		socket.on("turn-start", page => {
-			console.log("turn start", page);
-			this.setState({ uiState: "game", currentPage: page, turnTimeRemaining: Globals.turnDuration });
+			this.setState({
+				uiState: "game",
+				currentPage: page,
+				turnTimeRemaining: page.type === "draw"
+					? Globals.turnDuration
+					: Globals.guessDuration
+			});
 			this.timer = setInterval(() => {
-				this.setState({ turnTimeRemaining: this.state.turnTimeRemaining - 0.1 });
-			}, 100);
+				this.setState({ turnTimeRemaining: --this.state.turnTimeRemaining });
+			}, 1000);
 		});
 
 		socket.on("turn-end", () => {
-			console.log("turn end");
 			this.api.submitPage({
 				gameCode: this.state.gameCode,
 				playerId: this.state.playerId,
@@ -159,7 +163,9 @@ class Main extends React.Component {
 				{this.state.uiState === "game" &&
 					<Countdown
 						currentTime={this.state.turnTimeRemaining}
-						totalTime={Globals.turnDuration}
+						totalTime={
+							this.state.currentPage.type === "draw" ? Globals.turnDuration : Globals.guessDuration
+						}
 					/>
 				}
 				{this.state.uiState === "join" &&

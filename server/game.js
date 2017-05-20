@@ -2,8 +2,6 @@ var Game = function (numRounds) {
 	const self = this,
 		words = require("./words");
 
-	numRounds = numRounds || 2
-
 	self.players = []
 	self.gameInProgress = false
 	self.remainingRounds = numRounds

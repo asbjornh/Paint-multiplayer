@@ -1,5 +1,7 @@
 const globals= {
-	turnDuration: 60
+	turnDuration: 20,
+	guessDuration: 10,
+	numRounds: 2
 }
 
 module.exports = globals;

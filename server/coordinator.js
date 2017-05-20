@@ -35,7 +35,7 @@ const Coordinator = function (io) {
 
 	this.createGame = function () {
 		var gameCode = utils.createGameCode(Object.getOwnPropertyNames(games))
-		games[gameCode] = new Game()
+		games[gameCode] = new Game(globals.numRounds)
 		games[gameCode].gameCode = gameCode
 		return gameCode
 	}
@@ -45,25 +45,19 @@ const Coordinator = function (io) {
 		game.players.forEach(player => {
 			// Send each player the last page of his current book
 			getSocket(player.playerId).emit("turn-start", player.book.pages.slice(-1)[0])
-
-			// var socket = getSocket(player.playerId),
-			// 	page = player.book.pages.slice(-1)[0]
-
-			// socket.emit("turnstart", page)
 		})
+
+		const roundType = game.players[0].book.pages.slice(-1)[0].type
 
 		setTimeout(function () {
 			getSockets(game.gameCode).emit("turn-end")
-		}, globals.turnDuration * 1000)
+		}, 1000 * (roundType === "draw" ? globals.turnDuration : globals.guessDuration) )
 	}
 
 	const rate = game => {
 		game.setReadyState(false)
 		game.players.forEach(player => {
 			getSocket(player.playerId).emit("rate", player.book.pages)
-
-			// var socket = io.sockets.connected[player.id]
-			// socket.emit("rate", player.book.pages)
 		})
 	}
 
@@ -109,7 +103,6 @@ const Coordinator = function (io) {
 				turn(game)
 			} else {
 				// Round over
-				// getSockets(data.gameCode).emit("debug", game.players.map(p => p.book.pages))
 				game.returnBooksToOwner()
 				game.remainingRounds--
 
