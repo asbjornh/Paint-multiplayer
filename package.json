@@ -20,7 +20,7 @@
     "react-dom": "^15.5.4",
     "react-flip-move": "^2.9.7",
     "react-transition-group": "^1.1.2",
-    "socket.io": "^1.7.2",
+    "socket.io": "^2.2.0",
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
