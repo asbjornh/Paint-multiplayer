@@ -1,62 +1,65 @@
-// NOTE: ESLINT CONFIG - it's JSON with comments http://eslint.org/docs/user-guide/configuring
 {
   "root": true,
-  "plugins": ["react"],
-  "extends": ["eslint:recommended"],
+  "plugins": ["prettier", "react"],
+  "extends": ["eslint:recommended", "prettier"],
   "env": {
     "browser": true,
     "es6": true,
     "node": true
   },
-  "globals": {
-    "$": true
-  },
   "parser": "babel-eslint",
   "parserOptions": {
-      "ecmaVersion": 6,
-      "ecmaFeatures": {
-        "classes": true,
-        "jsx": true
-      },
-      "sourceType": "module"
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "classes": true,
+      "jsx": true
+    },
+    "sourceType": "module"
   },
   "rules": {
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto",
+        "singleQuote": true
+      }
+    ],
     "strict": 0,
     "eqeqeq": 1,
-    "no-console": 0,
+    "no-console": 1,
+    "no-irregular-whitespace": 1,
     "no-use-before-define": [2, "nofunc"],
-    "no-trailing-spaces": 1,
-    "space-before-function-paren": [1, { "anonymous": "always", "named": "never" }],
-    "no-unused-vars": [1, {"vars": "all", "args": "after-used", "argsIgnorePattern": "(^_|^next$)"}],
-    "keyword-spacing": [1, {"before": true, "after": true}],
-    "space-before-blocks": 1,
+    "no-unused-vars": [
+      1,
+      {
+        "vars": "all",
+        "args": "after-used",
+        "argsIgnorePattern": "(^_|^next$)"
+      }
+    ],
     "arrow-parens": [1, "as-needed"],
-    "no-extra-semi": 1,
-    "comma-dangle": 1,
     "no-dupe-keys": 2,
     "no-dupe-args": 2,
+    "no-warning-comments": 1,
     "react/no-deprecated": 2,
     "react/no-direct-mutation-state": 2,
     "react/no-multi-comp": 1,
     "react/no-unused-prop-types": 1,
+    "react/no-typos": 2,
     "react/prefer-stateless-function": 1,
     "react/prop-types": 1,
     "react/react-in-jsx-scope": 2,
-    "react/jsx-closing-bracket-location": 1,
-    "react/jsx-curly-spacing": [2, "never"],
-    "react/jsx-equals-spacing": [2, "never"],
     "react/jsx-no-duplicate-props": 2,
     "react/jsx-no-target-blank": 2,
     "react/jsx-no-undef": 2,
     "react/jsx-pascal-case": 2,
-    "react/jsx-space-before-closing": [2, "always"],
-    "react/jsx-tag-spacing": [2, {
-      "closingSlash": "never",
-      "beforeSelfClosing": "always",
-      "afterOpening": "never"
-    }],
     "react/jsx-uses-react": 2,
     "react/jsx-uses-vars": 2,
-    "react/jsx-wrap-multilines": 2
+    "semi": 1
+  },
+  "settings": {
+    "react": {
+      "version": "15.5"
+    }
   }
 }

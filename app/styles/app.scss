@@ -1,0 +1,133 @@
+@import "fonts";
+@import "vars";
+@import "functions";
+@import "mixins";
+@import "typography";
+
+@import "card";
+@import "countdown";
+@import "button";
+@import "input";
+@import "select";
+@import "form";
+@import "lobby";
+@import "draw";
+@import "guess";
+@import "rate";
+@import "summary";
+@import "game-over";
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: rgba(black, 0.01);
+  -webkit-touch-callout: none;
+}
+
+div,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+table,
+ul,
+button {
+  user-select: none;
+}
+
+html,
+body,
+#app {
+  position: fixed;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body,
+input,
+button {
+  font-family: "Miso";
+  font-size: 26px;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+}
+
+#app {
+  background: linear-gradient(-45deg, $lime, $yellow, $red 90%);
+}
+
+.transition-container {
+  @include full-screen;
+  overflow: hidden;
+}
+
+.logo {
+  @include slide-in;
+  @include slide-out;
+  @include appear-fade-in;
+  position: absolute;
+  height: 200px;
+  width: 100%;
+
+  &.view-appear-active {
+    transform-origin: 50% 150%;
+  }
+}
+
+.logo-content {
+  position: relative;
+  height: 100%;
+  transform: scale(0.5) translateY(-100px);
+  transition: transform 0.5s $ease-in-back-out;
+
+  .is-large & {
+    transform: translateZ(0);
+  }
+}
+
+.logo-main {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 172px;
+  height: 118px;
+  background-image: url(../assets/img/logo.svg);
+  transform: translate(-50%, -50%);
+}
+
+.logo-shadow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 172px;
+  height: 118px;
+  background-image: url(../assets/img/logo-red.svg);
+  transform: translate(-50%, -50%) translateY(14px);
+  filter: blur(8px);
+}
+
+.preload {
+  position: absolute;
+  left: -999em;
+
+  span {
+    &:nth-child(1) {
+      background-image: url(../assets/img/logo.svg);
+    }
+    &:nth-child(2) {
+      background-image: url(../assets/img/logo-red.svg);
+    }
+    &:nth-child(3) {
+      background-image: url(../assets/img/button.svg);
+    }
+    &:nth-child(4) {
+      background-image: url(../assets/img/input.svg);
+    }
+  }
+}

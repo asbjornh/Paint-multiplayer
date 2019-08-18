@@ -1,135 +1,145 @@
-const utils = require("./utils")
-const Game = require("./game")
-const globals = require("../globals");
+const utils = require('./utils');
+const Game = require('./game');
+const globals = require('../app/globals');
 
-const Coordinator = function (io) {
-	var games = {};
+const Coordinator = function(io) {
+  var games = {};
 
-	function getSocket(id) {
-		return io.sockets.connected[id]
-	}
+  function getSocket(id) {
+    return io.sockets.connected[id];
+  }
 
-	function getSockets(roomId) {
-		return io.sockets.in(roomId)
-	}
+  function getSockets(roomId) {
+    return io.sockets.in(roomId);
+  }
 
-	this.addPlayerToGame = function (data) {
-		// data = { playerName, playerId, gameCode }
+  this.addPlayerToGame = function(data) {
+    // data = { playerName, playerId, gameCode }
 
-		const game = games[data.gameCode]
+    const game = games[data.gameCode];
 
-		if (game && !game.gameInProgress) {
-			getSocket(data.playerId).join(data.gameCode)
+    if (game && !game.gameInProgress) {
+      getSocket(data.playerId).join(data.gameCode);
 
-			game.players.push({
-				playerName: data.playerName,
-				playerId:   data.playerId
-			})
+      game.players.push({
+        playerName: data.playerName,
+        playerId: data.playerId
+      });
 
-			getSockets(data.gameCode).emit("get-player-list", game.players)
-			return true;
-		}
+      getSockets(data.gameCode).emit('get-player-list', game.players);
+      return true;
+    }
 
-		return false;
-	}
+    return false;
+  };
 
-	this.createGame = function () {
-		var gameCode = utils.createGameCode(Object.getOwnPropertyNames(games))
-		games[gameCode] = new Game(globals.numRounds)
-		games[gameCode].gameCode = gameCode
-		return gameCode
-	}
+  this.createGame = function() {
+    var gameCode = utils.createGameCode(Object.getOwnPropertyNames(games));
+    games[gameCode] = new Game(globals.numRounds);
+    games[gameCode].gameCode = gameCode;
+    return gameCode;
+  };
 
-	const turn = game => {
-		game.setReadyState(false)
-		game.players.forEach(player => {
-			// Send each player the last page of his current book
-			getSocket(player.playerId).emit("turn-start", player.book.pages.slice(-1)[0])
-		})
+  const turn = game => {
+    game.setReadyState(false);
+    game.players.forEach(player => {
+      // Send each player the last page of his current book
+      getSocket(player.playerId).emit(
+        'turn-start',
+        player.book.pages.slice(-1)[0]
+      );
+    });
 
-		const roundType = game.players[0].book.pages.slice(-1)[0].type
+    const roundType = game.players[0].book.pages.slice(-1)[0].type;
 
-		setTimeout(function () {
-			getSockets(game.gameCode).emit("turn-end")
-		}, 1000 * (roundType === "draw" ? globals.turnDuration : globals.guessDuration) )
-	}
+    setTimeout(function() {
+      getSockets(game.gameCode).emit('turn-end');
+    }, 1000 *
+      (roundType === 'draw' ? globals.turnDuration : globals.guessDuration));
+  };
 
-	const rate = game => {
-		game.setReadyState(false)
-		game.players.forEach(player => {
-			getSocket(player.playerId).emit("rate", player.book.pages)
-		})
-	}
+  const rate = game => {
+    game.setReadyState(false);
+    game.players.forEach(player => {
+      getSocket(player.playerId).emit('rate', player.book.pages);
+    });
+  };
 
-	this.startGame = function (gameCode, difficulty) {
-		var game = games[gameCode]
+  this.startGame = function(gameCode, difficulty) {
+    var game = games[gameCode];
 
-		if (!game.gameInProgress) {
-			getSockets(gameCode).emit("get-remaining-rounds", game.remainingRounds);
-			game.startGame(difficulty)
-			turn(game)
-		}
-	}
+    if (!game.gameInProgress) {
+      getSockets(gameCode).emit('get-remaining-rounds', game.remainingRounds);
+      game.startGame(difficulty);
+      turn(game);
+    }
+  };
 
-	this.startNewGame = function (gameCode) {
-		var game = games[gameCode]
-		game.reset()
-	}
+  this.startNewGame = function(gameCode) {
+    var game = games[gameCode];
+    game.reset();
+  };
 
-	this.startRound = function (gameCode) {
-		var game = games[gameCode]
-		game.createBooks()
-		turn(game)
-	}
+  this.startRound = function(gameCode) {
+    var game = games[gameCode];
+    game.createBooks();
+    turn(game);
+  };
 
-	this.submitPage = function (data) {
-		// data  { gameCode, playerId, answer }
-		const game = games[data.gameCode]
-		const player = game.getPlayer(data.playerId)
+  this.submitPage = function(data) {
+    // data  { gameCode, playerId, answer }
+    const game = games[data.gameCode];
+    const player = game.getPlayer(data.playerId);
 
-		// Assign answer to last page of book
-		player.book.pages.slice(-1)[0].answer = data.answer
-		player.ready = true
+    // Assign answer to last page of book
+    player.book.pages.slice(-1)[0].answer = data.answer;
+    player.ready = true;
 
-		// Check that everyone has submitted answer
-		if (game.getReadyState()) {
-			// Turn has ended
-			game.rotateBooks()
+    // Check that everyone has submitted answer
+    if (game.getReadyState()) {
+      // Turn has ended
+      game.rotateBooks();
 
-			// Check if round is over
-			if (game.checkRound()) {
-				// New turn
-				game.addPages()
-				turn(game)
-			} else {
-				// Round over
-				game.returnBooksToOwner()
-				game.remainingRounds--
+      // Check if round is over
+      if (game.checkRound()) {
+        // New turn
+        game.addPages();
+        turn(game);
+      } else {
+        // Round over
+        game.returnBooksToOwner();
+        game.remainingRounds--;
 
-				rate(game)
-			}
-		}
-	}
+        rate(game);
+      }
+    }
+  };
 
-	this.submitRating = function (data) {
-		// data = { gameCode, playerId, ratedPages }
-		const game = games[data.gameCode]
-		const player = game.getPlayer(data.playerId)
+  this.submitRating = function(data) {
+    // data = { gameCode, playerId, ratedPages }
+    const game = games[data.gameCode];
+    const player = game.getPlayer(data.playerId);
 
-		game.rate(data.ratedPages)
+    game.rate(data.ratedPages);
 
-		player.ready = true
+    player.ready = true;
 
-		getSockets(data.gameCode).emit("get-remaining-rounds", game.remainingRounds);
-		getSockets(data.gameCode).emit("get-player-list", game.players.map( p => {
-			return {
-				playerName: p.playerName,
-				playerId: p.playerId,
-				score: p.score,
-				ready: p.ready
-			}
-		}))
-	}
-}
+    getSockets(data.gameCode).emit(
+      'get-remaining-rounds',
+      game.remainingRounds
+    );
+    getSockets(data.gameCode).emit(
+      'get-player-list',
+      game.players.map(p => {
+        return {
+          playerName: p.playerName,
+          playerId: p.playerId,
+          score: p.score,
+          ready: p.ready
+        };
+      })
+    );
+  };
+};
 
 module.exports = Coordinator;
