@@ -1,0 +1,63 @@
+.game-over {
+  @include card;
+}
+
+.game-over-content {
+  @include card-content;
+  background-color: transparent;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  max-width: 275px;
+  color: white;
+
+  ul {
+    @include remove-list-styles;
+    margin: auto;
+    font-size: 36px;
+  }
+
+  li {
+    display: flex;
+    min-width: 150px;
+    transform: scale(0);
+
+    &:first-child {
+      margin-bottom: 30px;
+      position: relative;
+
+      $bg-scale: 1.4;
+
+      &:before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding-top: decimal-floor($bg-scale * 26.185%);
+        width: $bg-scale * 100%;
+        background-size: 100%;
+        background-image: url(../../assets/img/input.svg);
+      }
+    }
+  }
+
+  .name {
+    flex-grow: 1;
+  }
+
+  .score {
+    margin-left: 20px;
+  }
+
+  button {
+    width: 100%;
+    margin-top: auto;
+  }
+}
+
+.game-over-header {
+  @include large-text;
+  text-align: center;
+}

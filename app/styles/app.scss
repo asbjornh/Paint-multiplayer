@@ -5,17 +5,8 @@
 @import "typography";
 
 @import "card";
-@import "countdown";
-@import "button";
-@import "input";
-@import "select";
 @import "form";
-@import "lobby";
-@import "draw";
-@import "guess";
-@import "rate";
-@import "summary";
-@import "game-over";
+@import "../components/**/*.scss";
 
 *,
 *:before,

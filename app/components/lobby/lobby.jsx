@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import FlipMove from 'react-flip-move';
-import Button from './button';
-import Select from './select';
+import Button from 'components/button';
+import Select from 'components/select';
 
 const Lobby = ({ gameCode, players, startGame, setDifficulty }) => {
   return (

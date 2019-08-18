@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Drawing from './drawing';
-import Button from './button';
+import Drawing from 'components/drawing';
+import Button from 'components/button';
 
 class Rate extends React.Component {
   static propTypes = {

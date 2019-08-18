@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
-import Button from './button';
-import TextInput from './text-input';
+import Button from 'components/button';
+import TextInput from 'components/text-input';
 
 class JoinForm extends React.Component {
   static propTypes = {

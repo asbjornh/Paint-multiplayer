@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import mojs from 'mo-js';
 
-import Button from './button';
+import Button from 'components/button';
 
 function sortPlayers(a, b) {
   if (a.score > b.score) return -1;

@@ -1,6 +1,6 @@
 const utils = require('./utils');
 const Game = require('./game');
-const globals = require('../app/globals');
+const globals = require('../globals');
 
 const Coordinator = function(io) {
   var games = {};

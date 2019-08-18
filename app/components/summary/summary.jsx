@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import FlipMove from 'react-flip-move';
-import Button from './button';
+import Button from 'components/button';
 
 function sortPlayers(a, b) {
   if (a.score > b.score) return -1;

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DrawUtils from '../draw-utils';
+import DrawUtils from 'js/draw-utils';
 
 class Drawing extends React.Component {
   static propTypes = {

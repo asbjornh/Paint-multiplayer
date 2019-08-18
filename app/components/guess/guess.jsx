@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import TextInput from './text-input';
-import Drawing from './drawing';
+import TextInput from 'components/text-input';
+import Drawing from 'components/drawing';
 
 class Guess extends React.Component {
   static propTypes = {

@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
-import ApiHelper from '../api-helper';
-import Globals from '../globals';
+import ApiHelper from 'js/api-helper';
+import Globals from '../../globals';
 
 import Countdown from './countdown';
 import JoinForm from './join-form';
